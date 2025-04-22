@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+@theme {
+  --fill-google-logo-blue: #4285f4;
+  --fill-google-logo-green: #34a853;
+  --fill-google-logo-yellow: #fbbc05;
+  --fill-google-logo-red: #ea4335;
+}
