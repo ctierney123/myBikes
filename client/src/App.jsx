@@ -1,6 +1,7 @@
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 import Landing from "./pages/Landing.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
 import DashboardLayout from "./pages/DashboardLayout.jsx";
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
@@ -12,9 +13,11 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<h1>Dashboard</h1>} />
           <Route path="profile" element={<h1>Profile</h1>} />
+          <Route path="stations" element={<h1>All Stations</h1>} />
           <Route path="settings" element={<h1>Settings</h1>} />
         </Route>
       </Routes>

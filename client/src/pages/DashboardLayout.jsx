@@ -1,12 +1,16 @@
-import { House, LogOut, Settings, UserRound } from "lucide-react";
+import { House, Settings, UserRound, TrainFront } from "lucide-react";
 import SideNav from "../components/SideNav.jsx";
 import { Outlet } from "react-router-dom";
-
 const navItems = [
   {
     name: "Home",
     icon: <House className="text-white w-6 h-6" />,
     link: "/dashboard",
+  },
+  {
+    name: "All stations",
+    icon: <TrainFront className="text-white w-6 h-6" />,
+    link: "/dashboard/stations",
   },
   {
     name: "Profile",
@@ -17,11 +21,6 @@ const navItems = [
     name: "Settings",
     icon: <Settings className="text-white w-6 h-6" />,
     link: "/dashboard/settings",
-  },
-  {
-    name: "Logout",
-    icon: <LogOut className="text-white w-6 h-6" />,
-    link: "/logout",
   },
 ];
 
