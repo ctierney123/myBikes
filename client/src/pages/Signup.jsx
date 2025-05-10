@@ -1,21 +1,51 @@
 import GithubButton from "../components/icons/GithubButton.jsx";
 import GoogleButton from "../components/icons/GoogleButton.jsx";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import {
+  doCreateUserWithEmailAndPassword,
+  handleError,
+} from "../firebase/functions.js";
+import { useNavigate } from "react-router-dom";
 
 export default function SignupPage() {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    try {
+      await doCreateUserWithEmailAndPassword(email, password, username);
+      navigate("/login");
+      alert("Account created successfully");
+    } catch (error) {
+      console.log(error);
+      alert(handleError(error.message));
+    }
+  };
+
   return (
     <div className="w-[100vw] h-[100vh] bg-[#f1f5f9]">
       <section className="flex flex-col items-center rounded-md absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30rem] ">
         <div className="flex items-center"></div>
         <div className="flex flex-col w-full h-full bg-white rounded-lg shadow p-8">
           <h2 className="text-2xl font-bold">Create an account</h2>
-          <form className="mt-4 space-y-4">
+          <form className="mt-4 space-y-4" onSubmit={handleSignup}>
             <div className="flex flex-col space-y-3">
               <label className="text-sm font-medium">Username</label>
               <input
                 className="border border-gray-400 px-2 py-2 rounded-md text-sm focus:outline-blue-600 "
                 placeholder="JohnDoe56"
                 required
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               ></input>
             </div>
             <div className="flex flex-col space-y-3">
@@ -25,6 +55,8 @@ export default function SignupPage() {
                 className="border border-gray-400 px-2 py-2 rounded-md text-sm focus:outline-blue-600 "
                 placeholder="name@website.com"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               ></input>
             </div>
             <div className="flex flex-col space-y-3">
@@ -34,6 +66,8 @@ export default function SignupPage() {
                 className="border border-gray-400 px-2 py-2 rounded-md text-sm focus:outline-blue-600 "
                 placeholder="••••••••"
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               ></input>
             </div>
             <div className="flex flex-col space-y-3">
@@ -43,6 +77,8 @@ export default function SignupPage() {
                 className="border border-gray-400 px-2 py-2 rounded-md text-sm focus:outline-blue-600 "
                 placeholder="••••••••"
                 required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
               ></input>
             </div>
             <div className="pt-4 pb-0">
