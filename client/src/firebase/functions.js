@@ -10,9 +10,9 @@ import {
   sendPasswordResetEmail,
   EmailAuthProvider,
   reauthenticateWithCredential,
+  GithubAuthProvider,
+  AuthErrorCodes,
 } from "firebase/auth";
-
-import { AuthErrorCodes } from "firebase/auth";
 
 function handleError(errorMessage) {
   if (errorMessage.includes(AuthErrorCodes.INVALID_LOGIN_CREDENTIALS)) {
@@ -49,9 +49,16 @@ async function doSignInWithEmailAndPassword(email, password) {
   await signInWithEmailAndPassword(auth, email, password);
 }
 
-async function doSocialSignIn() {
+async function doSocialSignIn(provider) {
   let auth = getAuth();
-  let socialProvider = new GoogleAuthProvider();
+
+  let socialProvider = null;
+  if (provider === "google") {
+    socialProvider = new GoogleAuthProvider();
+  } else if (provider === "github") {
+    socialProvider = new GithubAuthProvider();
+  }
+
   await signInWithPopup(auth, socialProvider);
 }
 
