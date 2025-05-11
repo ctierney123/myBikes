@@ -12,28 +12,17 @@ const createUser = async (userId, username) => {
     favorites: [],
   };
 
-  const userCollection = await users();
+  await client.lpush("users", JSON.stringify(userId));
 
-  const insertInfo = await userCollection.insertOne(newUser);
-  if (!insertInfo.insertedId) throw new Error("Could not add user");
+  await client.set(`user/${userId}`, JSON.stringify(newUser));
 
-  const addedId = insertInfo.insertInfo.toString();
-  const userById = getUserById(addedId);
+  let userCache = await client.get(`user/${userId}`);
+  if (!userCache) {
+    throw new Error("Could not create user");
+  }
+  userCache = JSON.parse(userCache);
 
-  return userById;
-};
-
-const getUserById = async (userId) => {
-  userId = isId(userId, "userId");
-
-  const userCollection = await users();
-  let userById = await userCollection.findOne({
-    _id: new ObjectId(userId),
-  });
-
-  if (!userById) throw new Error(`No user found with id, ${userId}!`);
-
-  return userById;
+  return userCache;
 };
 
 const updateUser = async (userId, updateObject) => {
@@ -54,33 +43,81 @@ const updateUser = async (userId, updateObject) => {
       favorite = favorite.isFavorite(favorite, "favorite");
     });
     updatedUser.favorites = favorites;
+    await client.lset(`${userId}/favorites`, JSON.stringify(favorites));
   }
 
-  const userCollection = await users();
-  const updatedInfo = await userCollection.findOneAndUpdate(
-    { _id: new ObjectId(userId) },
-    { $set: updatedUser },
-    { returnDocument: "after" }
-  );
+  await client.lrem("users", 0, JSON.stringify(userId));
+  await client.lpush("users", JSON.stringify(userId));
+  await client.set(`user/${userId}`, JSON.stringify(updatedUserr));
 
-  if (!updatedInfo)
-    throw new Error(`Could not update user with id of ${userId} successfully`);
+  let userCache = await client.get(`user/${userId}`);
+  if (!userCache) {
+    throw new Error("Could not update user");
+  }
+  userCache = JSON.parse(userCache);
 
-  return updatedInfo;
+  return userCache;
 };
 
 const removeUser = async (userId) => {
   userId = isId(userId, "userId");
 
-  const userCollection = await users();
-  const deletionInfo = await userCollection.findOneAndDelete({
-    _id: new ObjectId(userId),
-  });
+  let tempCache = client.get(`user/${userId}`);
 
-  if (!deletionInfo)
-    throw new Error(`Could not delete user with id of ${userId}`);
+  await client.lrem("users", 0, JSON.stringify(userId));
+  await client.del(`user/${userId}`);
+  await client.del(`${userId}/favorites`);
 
-  return deletionInfo;
+  let userCache = await client.get(`user/${userId}`);
+  if (userCache) {
+    throw new Error("Could not remove user");
+  }
+
+  return tempCache;
 };
 
-export { createUser, getUserById, updateUser, removeUser };
+const getAllUsers = async () => {
+  let allUsersCache = await client.lrange("users", 0, -1);
+  if (allUsersCache) {
+    allUsersCache = JSON.parse(stationStatusCache);
+
+    return allUsersCache;
+  } else {
+    throw new Error("Could not get all users");
+  }
+};
+
+const getUserById = async (userId) => {
+  userId = isId(userId, "userId");
+
+  let userCache = await client.get(`user/${userId}`);
+  if (!userCache) {
+    throw new Error(`Could not get user with id, ${userId}`);
+  }
+  userCache = JSON.parse(userCache);
+
+  return userCache;
+};
+
+const getFavoritesByUserId = async (userId) => {
+  userId = isId(userId, "userId");
+
+  let favoritesCache = await client.lrange(`${userId}/favorites`, 0, -1);
+  if (favoritesCache) {
+    favoritesCache = JSON.parse(favoritesCache);
+
+    return favoritesCache;
+  } else {
+    throw new Error(`Could not get all favorite with userId, ${userId}`);
+  }
+};
+
+export {
+  createUser,
+  getUserById,
+  updateUser,
+  removeUser,
+  getAllUsers,
+  getUserById,
+  getFavoritesByUserId,
+};

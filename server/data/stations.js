@@ -1,4 +1,5 @@
 import redis from "redis";
+import { calculateDistance } from "../helpers";
 export const client = redis.createClient();
 client.connect().then(() => {});
 
@@ -50,8 +51,37 @@ const getAllStatuses = async () => {
       }
 
       const data = await res.json();
-      await client.set("statusList", JSON.stringify(data));
+      await client.set("status", JSON.stringify(data));
       return data;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+};
+
+const getAllStationsAndStatuses = async () => {
+  let stationStatusCache = await client.get(`stations`);
+  if (stationStatusCache) {
+    stationStatusCache = JSON.parse(stationStatusCache);
+
+    return stationStatusCache;
+  } else {
+    try {
+      const resStation = await getAllStations();
+      const dataStation = await resStation.json();
+
+      const resStatus = await getAllStations();
+      const dataStatus = await resStatus.json();
+
+      const dataMerge = dataStation.map(
+        (station) => (station = { ...station, ...dataStatus.find(station.id) })
+      );
+
+      if (!dataMerge) {
+        throw new Error(`Could not get status of id, ${id}`);
+      }
+      await client.set(`stations`, JSON.stringify(stationStatusCache));
+      return stationStatusCache;
     } catch (e) {
       console.error(e);
     }
@@ -66,7 +96,7 @@ const getStationById = async (id) => {
     return stationByIdCache;
   } else {
     try {
-      const res = await getAllStations();
+      const res = await getAllStationsAndStatuses();
       const data = await res.json();
 
       const stationById = data.find((station) => station.station_id == id);
@@ -82,31 +112,165 @@ const getStationById = async (id) => {
   }
 };
 
-const getStatusByStationId = async (id) => {
-  let statusByIdCache = await client.get(`status/${id}`);
-  if (statusByIdCache) {
-    statusByIdCache = JSON.parse(statusByIdCache);
+const getNearbyStations = async (radius, userLat, userLong) => {
+  let nearyStationsCache = await client.get(`nearby`);
+  if (nearyStationsCache) {
+    nearyStationsCache = JSON.parse(nearyStationsCache);
 
-    return statusByIdCache;
+    return nearyStationsCache;
   } else {
     try {
-      const res = await getAllStatuses();
+      const res = await getAllStationsAndStatuses();
       const data = await res.json();
 
-      const statusByStationId = data.find(
-        (station) => station.station_id == id
+      const nearbyStations = data.filter(
+        (station) =>
+          parseFloat(
+            calculateDistance(
+              userLat,
+              userLong,
+              station.lon,
+              station.lat
+            ).toFixed(2)
+          ) <= rad
       );
 
-      if (!statusByStationId) {
-        throw new Error(`Could not get status of id, ${id}`);
+      if (!nearbyStations) {
+        throw new Error(
+          `Could not get all nearby stations within raidus of, ${rad}`
+        );
       }
-      await client.set(`status/${id}`, JSON.stringify(statusByStationId));
-      return statusByStationId;
+
+      await client.set(`nearby`, JSON.stringify(nearbyStations));
+      return nearbyStations;
     } catch (e) {
       console.error(e);
     }
   }
 };
 
-export { getAllStations, getAllStatuses, getStationById, getStatusByStationId};
+// OLD FUNCTIONS THAT GET STATIONS AND STATUSES SEPERATELY
 
+// const getStationById = async (id) => {
+//   let stationByIdCache = await client.get(`station/${id}`);
+//   if (stationByIdCache) {
+//     stationByIdCache = JSON.parse(stationByIdCache);
+
+//     return stationByIdCache;
+//   } else {
+//     try {
+//       const res = await getAllStations();
+//       const data = await res.json();
+
+//       const stationById = data.find((station) => station.station_id == id);
+
+//       if (!stationById) {
+//         throw new Error(`Could not get status of id, ${id}`);
+//       }
+//       await client.set(`station/${id}`, JSON.stringify(stationById));
+//       return stationById;
+//     } catch (e) {
+//       console.error(e);
+//     }
+//   }
+// };
+
+// const getStatusByStationId = async (id) => {
+//   let statusByIdCache = await client.get(`status/${id}`);
+//   if (statusByIdCache) {
+//     statusByIdCache = JSON.parse(statusByIdCache);
+
+//     return statusByIdCache;
+//   } else {
+//     try {
+//       const res = await getAllStatuses();
+//       const data = await res.json();
+
+//       const statusByStationId = data.find(
+//         (station) => station.station_id == id
+//       );
+
+//       if (!statusByStationId) {
+//         throw new Error(`Could not get status of id, ${id}`);
+//       }
+//       await client.set(`status/${id}`, JSON.stringify(statusByStationId));
+//       return statusByStationId;
+//     } catch (e) {
+//       console.error(e);
+//     }
+//   }
+// };
+
+// const getNearbyStations = async (radius, userLat, userLong) => {
+//   let nearyStationsCache = await client.get(`nearby/${id}`);
+//   if (nearyStationsCache) {
+//     nearyStationsCache = JSON.parse(nearyStationsCache);
+
+//     return nearyStationsCache;
+//   } else {
+//     try {
+//       const res = await getAllStations();
+//       const data = await res.json();
+
+//       const nearbyStations = data.filter(
+//         (station) =>
+//           parseFloat(
+//             calculateDistance(
+//               userLat,
+//               userLong,
+//               station.lon,
+//               station.lat
+//             ).toFixed(2)
+//           ) <= rad
+//       );
+
+//       if (!nearbyStations) {
+//         throw new Error(
+//           `Could not get all nearby stations within raidus of, ${rad}`
+//         );
+//       }
+//       await client.set(`status/${id}`, JSON.stringify(nearbyStations));
+//       return nearbyStations;
+//     } catch (e) {
+//       console.error(e);
+//     }
+//   }
+// };
+
+// const getNearbyStationStatueses = async (radius, userLat, userLong) => {
+//   let nearyStationsCache = await client.get(`nearby/${id}`);
+//   if (nearyStationsCache) {
+//     nearyStationsCache = JSON.parse(nearyStationsCache);
+
+//     return nearyStationsCache;
+//   } else {
+//     try {
+//       const res = await getAllStations();
+//       const data = await res.json();
+
+//       const nearbyStations = data.filter(
+//         (station) =>
+//           parseFloat(
+//             calculateDistance(
+//               userLat,
+//               userLong,
+//               station.lon,
+//               station.lat
+//             ).toFixed(2)
+//           ) <= rad
+//       );
+
+//       if (!nearbyStations) {
+//         throw new Error(
+//           `Could not get all nearby stations within raidus of, ${rad}`
+//         );
+//       }
+//       await client.set(`status/${id}`, JSON.stringify(nearbyStations));
+//       return nearbyStations;
+//     } catch (e) {
+//       console.error(e);
+//     }
+//   }
+// };
+
+export { getAllStationsAndStatuses, getStationById, getNearbyStations };
