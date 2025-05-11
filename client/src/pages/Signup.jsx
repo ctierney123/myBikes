@@ -1,5 +1,4 @@
-import GithubButton from "../components/icons/GithubButton.jsx";
-import GoogleButton from "../components/icons/GoogleButton.jsx";
+import SocialSignIn from "../components/SocialSignIn.jsx";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -7,6 +6,7 @@ import {
   handleError,
 } from "../firebase/functions.js";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function SignupPage() {
   const [username, setUsername] = useState("");
@@ -14,6 +14,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -30,6 +31,10 @@ export default function SignupPage() {
       alert(handleError(error.message));
     }
   };
+
+  if (currentUser) {
+    navigate("/dashboard");
+  }
 
   return (
     <div className="w-[100vw] h-[100vh] bg-[#f1f5f9]">
@@ -101,10 +106,7 @@ export default function SignupPage() {
           <div className="fter:h-px flex items-center before:h-px before:flex-1  before:bg-gray-300 before:content-[''] after:h-px after:flex-1 after:bg-gray-300  after:content-['']">
             <p className="text-sm px-3 font-medium">Or continue with </p>
           </div>
-          <div className="flex mt-4 justify-center space-x-4">
-            <GoogleButton />
-            <GithubButton />
-          </div>
+          <SocialSignIn />
         </div>
       </section>
     </div>

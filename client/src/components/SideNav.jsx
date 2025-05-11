@@ -16,7 +16,7 @@ export default function SideNav({ navItems }) {
   };
 
   return (
-    <nav className="bg-blue-500 w-56 h-full px-4 py-2 flex flex-col shadow-lg">
+    <nav className="bg-blue-500 min-w-56 h-full px-4 py-2 flex flex-col shadow-lg">
       <h1 className="text-3xl font-bold mb-2 text-white ml-2">Citi Bikes</h1>
       <ul className="flex flex-col gap-1 ">
         {navItems.map((item, index) => (

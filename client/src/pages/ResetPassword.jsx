@@ -2,11 +2,13 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { doPasswordReset } from "../firebase/functions.js";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function ResetPassword() {
   const [email, setEmail] = useState("");
 
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
 
   const passwordReset = async (e) => {
     e.preventDefault();
@@ -19,6 +21,10 @@ export default function ResetPassword() {
       alert("Error sending password reset link");
     }
   };
+
+  if (currentUser) {
+    navigate("/dashboard");
+  }
 
   return (
     <div className="w-[100vw] h-[100vh] bg-[#f1f5f9]">

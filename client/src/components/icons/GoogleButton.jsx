@@ -1,8 +1,9 @@
-export default function GoogleButton() {
+export default function GoogleButton({ onClick }) {
   return (
     <button
       aria-label="Sign in with Google"
       className="group flex items-center bg-white border border-gray-300 rounded-md p-0.5 pr-3 cursor-pointer hover:bg-gray-100"
+      onClick={onClick}
     >
       <div className="flex items-center justify-center bg-white w-9 h-9 rounded-l group-hover:bg-gray-100">
         <svg
