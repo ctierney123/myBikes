@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { fetchAllStations } from "../data/stations.js";
 import { useState, useEffect } from "react";
 
-export default function AllStations() {
+export default function NearbyStations() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [stations, setStations] = useState([]);
@@ -66,9 +66,9 @@ export default function AllStations() {
   return (
     <div className="w-full h-full flex flex-col p-8 overflow-y-auto">
       <section className="flex-col bg-white rounded-md p-4 shadow-sm mb-6">
-        <h1 className="text-2xl font-bold">All Stations</h1>
+        <h1 className="text-2xl font-bold">Nearby Stations</h1>
         <p className="text-gray-600">
-          List of all stations will be displayed here.
+          List of stations 1km near you will be displayed here.
         </p>
       </section>
       <div>

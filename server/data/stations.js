@@ -82,7 +82,7 @@ const getAllStationsAndStatuses = async () => {
       );
 
       if (!dataMerge) {
-        throw new Error(`Could not get status of id, ${id}`);
+        throw new Error(`Could not get station of id, ${id}`);
       }
 
       await client.set(`stations`, JSON.stringify(dataMerge));
@@ -106,10 +106,33 @@ const getStationById = async (id) => {
       const stationById = data.find((station) => station.station_id == id);
 
       if (!stationById) {
-        throw new Error(`Could not get status of id, ${id}`);
+        throw new Error(`Could not get station of id, ${id}`);
       }
       await client.set(`station/${id}`, JSON.stringify(stationById));
       return stationById;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+};
+
+const getStationByName = async (name) => {
+  let stationByNameCache = await client.get(`station/${name}`);
+  if (stationByNameCache) {
+    stationByNameCache = JSON.parse(stationByNameCache);
+
+    return stationByNameCache;
+  } else {
+    try {
+      const data = await getAllStationsAndStatuses();
+
+      const stationByName = data.find((station) => station.name.includes(name));
+
+      if (!stationByName) {
+        throw new Error(`Could not find stations with name, ${name}`);
+      }
+      await client.set(`station/${name}`, JSON.stringify(stationByName));
+      return stationByName;
     } catch (e) {
       console.error(e);
     }
@@ -153,4 +176,9 @@ const getNearbyStations = async (userLat, userLong) => {
   }
 };
 
-export { getAllStationsAndStatuses, getStationById, getNearbyStations };
+export {
+  getAllStationsAndStatuses,
+  getStationById,
+  getNearbyStations,
+  getStationByName,
+};
