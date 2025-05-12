@@ -8,7 +8,7 @@ import {
 
 const router = Router();
 
-router.get("/stations", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const data = await getAllStationsAndStatuses();
     return res.status(200).json(data);
@@ -17,36 +17,18 @@ router.get("/stations", async (req, res) => {
   }
 });
 
-// router.get("/statuses", async (req, res) => {
-//   try {
-//     const res = await getAllStatuses();
-//     return res.status(200).json(data);
-//   } catch (e) {
-//     return res.status(404).json({ error: e });
-//   }
-// });
-
-router.get("/station/:id", async (req, res) => {
+router.get("/nearby", async (req, res) => {
   try {
-    const data = await getStationById(req.params.id);
+    const data = await getNearbyStations(40.82319448542357, -73.88762910982096);
     return res.status(200).json(data);
   } catch (e) {
     return res.status(404).json({ error: e });
   }
 });
 
-// router.get("/status/:id", async (req, res) => {
-//   try {
-//     const res = await getStatusByStationId(req.params.id);
-//     return res.status(200).json(data);
-//   } catch (e) {
-//     return res.status(404).json({ error: e });
-//   }
-// });
-
-router.get("/nearby", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
-    const data = await getNearbyStations(req.params.id);
+    const data = await getStationById(req.params.id);
     return res.status(200).json(data);
   } catch (e) {
     return res.status(404).json({ error: e });

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { client } from "../app";
+import { client } from "../app.js";
 //import { isSignedIn, isSignedOut } from "../middleware.js";
 import { isId, isString, isUsername } from "../helpers.js";
 import {

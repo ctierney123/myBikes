@@ -6,6 +6,7 @@ import DashboardLayout from "./pages/DashboardLayout.jsx";
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import AllStations from "./pages/AllStations.jsx";
+import NearbyStations from "./pages/NearbyStations.jsx";
 
 function App() {
   return (
@@ -16,9 +17,9 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/dashboard" element={<DashboardLayout />}>
-          <Route index element={<AllStations />} />
+          <Route path="stations/:id" element={<AllStations />} />
           <Route path="favorites" element={<h1>Favorites</h1>} />
-          <Route path="nearby" element={<h1>Nearby</h1>} />
+          <Route path="nearby/:id" element={<NearbyStations />} />
           <Route path="profile" element={<h1>Profile</h1>} />
           <Route path="settings" element={<h1>Settings</h1>} />
         </Route>
