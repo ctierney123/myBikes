@@ -12,13 +12,14 @@ import {
 
 const router = Router();
 
+// create user in db
 router.post("/", async (req, res) => {
   const userData = req.body;
+  const userId = req.user.uid;
 
-  let { userId, username } = userData;
+  let { username } = userData;
 
   try {
-    userId = isId(userId, "userId");
     username = isUsername(username, "username");
   } catch (e) {
     return res.status(400).json({ error: e.message });
@@ -32,7 +33,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/users", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const data = await getAllUsers();
     return res.status(200).json(data);
@@ -42,7 +43,7 @@ router.get("/users", async (req, res) => {
 });
 
 router
-  .route("/user/:id")
+  .route("/:id")
   .get(async (req, res) => {
     try {
       const data = await getUserById(req.params.id);
@@ -52,8 +53,7 @@ router
     }
   })
   .put(async (req, res) => {
-    const user = req.session.user;
-    const userId = user._id;
+    const userId = req.user.uid;
 
     const updateObject = req.body;
     if (!updateObject || Object.keys(updateObject).length === 0) {
@@ -93,8 +93,7 @@ router
     }
   })
   .delete(async (req, res) => {
-    const user = req.session.user;
-    const userId = user._id;
+    const userId = req.user.uid;
 
     try {
       userId = isId(userId);
@@ -109,14 +108,5 @@ router
       return res.status(500).json({ error: e });
     }
   });
-
-router.get("/favorite/:id", async (req, res) => {
-  try {
-    const data = await getFavoritesByUserId(req.params.id);
-    return res.status(200).json(data);
-  } catch (e) {
-    return res.status(404).json({ error: e });
-  }
-});
 
 export default router;

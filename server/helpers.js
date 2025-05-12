@@ -110,7 +110,7 @@ export function isPassword(password) {
   if (password.includes(" "))
     throw new Error("password cannot contain a space");
   if (password.length < 8)
-    throw new Error("password must be atleast 8 characters long");
+    throw new Error("password must be at least 8 characters long");
   if (!/[A-Z]/.test(password))
     throw new Error("password must contain atleast one uppercase character");
   if (!/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(password))
