@@ -1,14 +1,12 @@
 //import mongo collections, bcrypt and implement the following data functions
-import { isId, isString, isUsername } from "../helpers.js";
+import { isString, isUsername } from "../helpers.js";
 
 const createUser = async (userId, username) => {
-  userId = isId(userId, "userId");
   username = isUsername(username, "username");
 
   let newUser = {
     userId,
     username,
-    favorites: [],
   };
 
   await client.lpush("users", JSON.stringify(userId));
@@ -25,7 +23,6 @@ const createUser = async (userId, username) => {
 };
 
 const updateUser = async (userId, updateObject) => {
-  userId = isId(userId, "userId");
   updateObject = isObject(updateObject, "updateObject");
   const updateObjectKeys = Object.keys(updateObject);
   const updatedUser = await getUserById(userId);
@@ -59,8 +56,6 @@ const updateUser = async (userId, updateObject) => {
 };
 
 const removeUser = async (userId) => {
-  userId = isId(userId, "userId");
-
   let tempCache = client.get(`user/${userId}`);
 
   await client.lrem("users", 0, JSON.stringify(userId));
@@ -87,8 +82,6 @@ const getAllUsers = async () => {
 };
 
 const getUserById = async (userId) => {
-  userId = isId(userId, "userId");
-
   let userCache = await client.get(`user/${userId}`);
   if (!userCache) {
     throw new Error(`Could not get user with id, ${userId}`);
@@ -98,24 +91,4 @@ const getUserById = async (userId) => {
   return userCache;
 };
 
-const getFavoritesByUserId = async (userId) => {
-  userId = isId(userId, "userId");
-
-  let favoritesCache = await client.lrange(`${userId}/favorites`, 0, -1);
-  if (favoritesCache) {
-    favoritesCache = JSON.parse(favoritesCache);
-
-    return favoritesCache;
-  } else {
-    throw new Error(`Could not get all favorite with userId, ${userId}`);
-  }
-};
-
-export {
-  createUser,
-  getUserById,
-  updateUser,
-  removeUser,
-  getAllUsers,
-  getFavoritesByUserId,
-};
+export { createUser, getUserById, updateUser, removeUser, getAllUsers };
