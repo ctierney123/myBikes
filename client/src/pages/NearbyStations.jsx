@@ -1,64 +1,56 @@
 import { Bike, Anchor } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useNavigate, Link } from "react-router-dom";
-import { fetchAllStations } from "../data/stations.js";
+import { fetchNearbyStations } from "../data/stations.js";
 import { useState, useEffect } from "react";
+import LoadingSpinner from "../components/LoadingSpinner.jsx";
 
 export default function NearbyStations() {
-  const { id } = useParams();
   const navigate = useNavigate();
   const [stations, setStations] = useState([]);
   const [stationsPage, setStationsPage] = useState([]);
-  const [next, setNext] = useState(false);
-  const [currentPage, setCurrentPage] = useState(parseInt(id));
+  const [hasViewMore, setHasViewMore] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     async function getData() {
-      const data = await fetchAllStations();
+      const data = await fetchNearbyStations();
       console.log(data);
-      setStations(data);
-      try {
-        if (data && data.length > 0) {
-          const firstIndex = (currentPage - 1) * 10;
-          const lastIndex = firstIndex + 10;
-          const limit = data.slice(firstIndex, lastIndex);
 
-          // if (limit.length === 0) {
-          //   navigate("/404");
-          //   return;
-          // }
+      const sortedData = data.sort((a, b) => a.station_id - b.station_id);
+      setStations(sortedData);
 
-          const nextPage = lastIndex;
-          const isNext = nextPage < data.length;
-          setNext(isNext);
+      const firstIndex = 0;
+      const lastIndex = 20;
+      const limit = sortedData.slice(firstIndex, lastIndex);
+      const nextExists = lastIndex < sortedData.length;
 
-          setStationsPage(limit);
-        }
-      } catch (e) {
-        console.error(e);
-      }
+      setStationsPage(limit);
+      setHasViewMore(nextExists);
     }
 
     getData();
-  }, [currentPage]);
+  }, []);
+
+  useEffect(() => {
+    const firstIndex = 0;
+    const lastIndex = 20 + currentPage * 20;
+    const limit = stations.slice(firstIndex, lastIndex);
+
+    const nextExists = lastIndex < stations.length;
+    setStationsPage(limit);
+    setHasViewMore(nextExists);
+  }, [currentPage, stations]);
 
   const handleNextPage = () => {
     const nextPage = currentPage + 1;
     setCurrentPage(nextPage);
-    navigate(`/dashboard/stations/${nextPage}`);
-  };
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      const previousPage = currentPage - 1;
-      setCurrentPage(previousPage);
-      navigate(`/dashboard/stations/${previousPage}`);
-    }
   };
 
   if (!stations || stations.length === 0) {
     return (
-      <div className="loading">
-        <h2>Loading...</h2>
+      <div className="flex items-center justify-center w-full h-full">
+        <LoadingSpinner />
       </div>
     );
   }
@@ -71,10 +63,6 @@ export default function NearbyStations() {
           List of stations 1km near you will be displayed here.
         </p>
       </section>
-      <div>
-        {currentPage > 1 && <button onClick={handlePreviousPage}>Prev</button>}
-        {next && <button onClick={handleNextPage}>Next</button>}
-      </div>
       <section className="grid grid-cols-5 grid-rows-auto rounded-md gap-6">
         {stationsPage.map((station) => (
           <div
@@ -101,6 +89,16 @@ export default function NearbyStations() {
           </div>
         ))}
       </section>
+      <div className="flex justify-center mt-4">
+        {hasViewMore && (
+          <button
+            className="bg-white p-2 px-4 border border-gray-300 hover:bg-gray-100"
+            onClick={handleNextPage}
+          >
+            <p className="text-sm">View More</p>
+          </button>
+        )}
+      </div>
     </div>
   );
 }
