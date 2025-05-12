@@ -1,5 +1,4 @@
 //import mongo collections, bcrypt and implement the following data functions
-import { users } from "../config/mongoCollections.js";
 import { isId, isString, isUsername } from "../helpers.js";
 
 const createUser = async (userId, username) => {
@@ -118,6 +117,5 @@ export {
   updateUser,
   removeUser,
   getAllUsers,
-  getUserById,
   getFavoritesByUserId,
 };

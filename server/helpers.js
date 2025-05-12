@@ -1,5 +1,4 @@
 //You can add and export any helper functions you want here. If you aren't using any, then you can just leave this file as is.
-import { ObjectId } from "mongodb";
 
 export const isString = (element, varName) => {
   if (!element)
@@ -134,5 +133,6 @@ export const calculateDistance = (lat1, lon1, lat2, lon2) => {
       Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distance = R * c;
+
   return distance;
 };

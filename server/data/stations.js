@@ -1,5 +1,5 @@
 import redis from "redis";
-import { calculateDistance } from "../helpers";
+import { calculateDistance } from "../helpers.js";
 export const client = redis.createClient();
 client.connect().then(() => {});
 
@@ -68,20 +68,25 @@ const getAllStationsAndStatuses = async () => {
   } else {
     try {
       const resStation = await getAllStations();
-      const dataStation = await resStation.json();
+      const dataStation = resStation.data.stations;
 
-      const resStatus = await getAllStations();
-      const dataStatus = await resStatus.json();
+      const resStatus = await getAllStatuses();
+      const dataStatus = resStatus.data.stations;
 
       const dataMerge = dataStation.map(
-        (station) => (station = { ...station, ...dataStatus.find(station.id) })
+        (station) =>
+          (station = {
+            ...dataStatus.find((st) => st.station_id == station.station_id),
+            ...station,
+          })
       );
 
       if (!dataMerge) {
         throw new Error(`Could not get status of id, ${id}`);
       }
-      await client.set(`stations`, JSON.stringify(stationStatusCache));
-      return stationStatusCache;
+
+      await client.set(`stations`, JSON.stringify(dataMerge));
+      return dataMerge;
     } catch (e) {
       console.error(e);
     }
@@ -96,8 +101,7 @@ const getStationById = async (id) => {
     return stationByIdCache;
   } else {
     try {
-      const res = await getAllStationsAndStatuses();
-      const data = await res.json();
+      const data = await getAllStationsAndStatuses();
 
       const stationById = data.find((station) => station.station_id == id);
 
@@ -112,7 +116,7 @@ const getStationById = async (id) => {
   }
 };
 
-const getNearbyStations = async (radius, userLat, userLong) => {
+const getNearbyStations = async (userLat, userLong) => {
   let nearyStationsCache = await client.get(`nearby`);
   if (nearyStationsCache) {
     nearyStationsCache = JSON.parse(nearyStationsCache);
@@ -120,8 +124,7 @@ const getNearbyStations = async (radius, userLat, userLong) => {
     return nearyStationsCache;
   } else {
     try {
-      const res = await getAllStationsAndStatuses();
-      const data = await res.json();
+      const data = await getAllStationsAndStatuses();
 
       const nearbyStations = data.filter(
         (station) =>
@@ -129,10 +132,10 @@ const getNearbyStations = async (radius, userLat, userLong) => {
             calculateDistance(
               userLat,
               userLong,
-              station.lon,
-              station.lat
+              station.lat,
+              station.lon
             ).toFixed(2)
-          ) <= rad
+          ) <= 1
       );
 
       if (!nearbyStations) {
@@ -140,6 +143,7 @@ const getNearbyStations = async (radius, userLat, userLong) => {
           `Could not get all nearby stations within raidus of, ${rad}`
         );
       }
+      console.log(nearbyStations);
 
       await client.set(`nearby`, JSON.stringify(nearbyStations));
       return nearbyStations;
@@ -148,129 +152,5 @@ const getNearbyStations = async (radius, userLat, userLong) => {
     }
   }
 };
-
-// OLD FUNCTIONS THAT GET STATIONS AND STATUSES SEPERATELY
-
-// const getStationById = async (id) => {
-//   let stationByIdCache = await client.get(`station/${id}`);
-//   if (stationByIdCache) {
-//     stationByIdCache = JSON.parse(stationByIdCache);
-
-//     return stationByIdCache;
-//   } else {
-//     try {
-//       const res = await getAllStations();
-//       const data = await res.json();
-
-//       const stationById = data.find((station) => station.station_id == id);
-
-//       if (!stationById) {
-//         throw new Error(`Could not get status of id, ${id}`);
-//       }
-//       await client.set(`station/${id}`, JSON.stringify(stationById));
-//       return stationById;
-//     } catch (e) {
-//       console.error(e);
-//     }
-//   }
-// };
-
-// const getStatusByStationId = async (id) => {
-//   let statusByIdCache = await client.get(`status/${id}`);
-//   if (statusByIdCache) {
-//     statusByIdCache = JSON.parse(statusByIdCache);
-
-//     return statusByIdCache;
-//   } else {
-//     try {
-//       const res = await getAllStatuses();
-//       const data = await res.json();
-
-//       const statusByStationId = data.find(
-//         (station) => station.station_id == id
-//       );
-
-//       if (!statusByStationId) {
-//         throw new Error(`Could not get status of id, ${id}`);
-//       }
-//       await client.set(`status/${id}`, JSON.stringify(statusByStationId));
-//       return statusByStationId;
-//     } catch (e) {
-//       console.error(e);
-//     }
-//   }
-// };
-
-// const getNearbyStations = async (radius, userLat, userLong) => {
-//   let nearyStationsCache = await client.get(`nearby/${id}`);
-//   if (nearyStationsCache) {
-//     nearyStationsCache = JSON.parse(nearyStationsCache);
-
-//     return nearyStationsCache;
-//   } else {
-//     try {
-//       const res = await getAllStations();
-//       const data = await res.json();
-
-//       const nearbyStations = data.filter(
-//         (station) =>
-//           parseFloat(
-//             calculateDistance(
-//               userLat,
-//               userLong,
-//               station.lon,
-//               station.lat
-//             ).toFixed(2)
-//           ) <= rad
-//       );
-
-//       if (!nearbyStations) {
-//         throw new Error(
-//           `Could not get all nearby stations within raidus of, ${rad}`
-//         );
-//       }
-//       await client.set(`status/${id}`, JSON.stringify(nearbyStations));
-//       return nearbyStations;
-//     } catch (e) {
-//       console.error(e);
-//     }
-//   }
-// };
-
-// const getNearbyStationStatueses = async (radius, userLat, userLong) => {
-//   let nearyStationsCache = await client.get(`nearby/${id}`);
-//   if (nearyStationsCache) {
-//     nearyStationsCache = JSON.parse(nearyStationsCache);
-
-//     return nearyStationsCache;
-//   } else {
-//     try {
-//       const res = await getAllStations();
-//       const data = await res.json();
-
-//       const nearbyStations = data.filter(
-//         (station) =>
-//           parseFloat(
-//             calculateDistance(
-//               userLat,
-//               userLong,
-//               station.lon,
-//               station.lat
-//             ).toFixed(2)
-//           ) <= rad
-//       );
-
-//       if (!nearbyStations) {
-//         throw new Error(
-//           `Could not get all nearby stations within raidus of, ${rad}`
-//         );
-//       }
-//       await client.set(`status/${id}`, JSON.stringify(nearbyStations));
-//       return nearbyStations;
-//     } catch (e) {
-//       console.error(e);
-//     }
-//   }
-// };
 
 export { getAllStationsAndStatuses, getStationById, getNearbyStations };

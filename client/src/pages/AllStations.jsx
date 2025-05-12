@@ -75,7 +75,7 @@ export default function AllStations() {
       num_docks_available: 10,
     },
     {
-      station_id: 1,
+      station_id: 9,
       name: "Longfellow Ave & Aldus St",
       latitude: 40.845,
       longitude: -73.866,
@@ -84,7 +84,7 @@ export default function AllStations() {
       num_docks_available: 0,
     },
     {
-      station_id: 2,
+      station_id: 10,
       name: "East 138th St & Cypress Ave",
       latitude: 40.813,
       longitude: -73.908,
@@ -93,7 +93,7 @@ export default function AllStations() {
       num_docks_available: 5,
     },
     {
-      station_id: 3,
+      station_id: 13,
       name: "East 149th St & Morris Ave",
       latitude: 40.818,
       longitude: -73.911,
@@ -102,7 +102,7 @@ export default function AllStations() {
       num_docks_available: 10,
     },
     {
-      station_id: 4,
+      station_id: 14,
       name: "East 156th St & River Ave",
       latitude: 40.834,
       longitude: -73.917,
@@ -111,7 +111,7 @@ export default function AllStations() {
       num_docks_available: 8,
     },
     {
-      station_id: 5,
+      station_id: 15,
       name: "East 163rd St & Boston Rd",
       latitude: 40.837,
       longitude: -73.903,
@@ -120,7 +120,7 @@ export default function AllStations() {
       num_docks_available: 12,
     },
     {
-      station_id: 6,
+      station_id: 16,
       name: "East 170th St & Grand Concourse",
       latitude: 40.843,
       longitude: -73.903,
@@ -129,7 +129,7 @@ export default function AllStations() {
       num_docks_available: 5,
     },
     {
-      station_id: 7,
+      station_id: 17,
       name: "East 177th St & Third Ave",
       latitude: 40.847,
       longitude: -73.895,
@@ -138,7 +138,7 @@ export default function AllStations() {
       num_docks_available: 7,
     },
     {
-      station_id: 8,
+      station_id: 18,
       name: "East 184th St & Webster Ave",
       latitude: 40.855,
       longitude: -73.895,
@@ -159,7 +159,7 @@ export default function AllStations() {
       <section className="grid grid-cols-5 grid-rows-auto rounded-md gap-6">
         {stations.map((station) => (
           <div
-            key={station.id}
+            key={station.station_id}
             className="flex-col bg-white p-4 rounded-md shadow-sm"
           >
             <h2 className="text-xl font-semibold truncate">{station.name}</h2>
