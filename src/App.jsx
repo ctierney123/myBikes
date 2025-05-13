@@ -4,6 +4,7 @@ import { FavoriteStationsProvider } from './FavoriteStationsContext';
 import FavoriteStationsPage from './components/FavoriteStationsPage';
 import FavoriteStationDetailsPage from './components/FavoriteStationDetails';
 import NotFoundPage from './components/NotFoundPage';
+import SearchPage from './components/SearchPage';
 
 const App = () => {
   return (
@@ -12,6 +13,7 @@ const App = () => {
         <Routes>
           <Route path="/favorites" element={<FavoriteStationsPage />} />
           <Route path="/favorites/:id" element={<FavoriteStationDetailsPage />} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>
