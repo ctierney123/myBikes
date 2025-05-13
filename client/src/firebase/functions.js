@@ -12,6 +12,7 @@ import {
   reauthenticateWithCredential,
   GithubAuthProvider,
   AuthErrorCodes,
+  updateEmail,
 } from "firebase/auth";
 
 function handleError(errorMessage) {
@@ -72,6 +73,16 @@ async function doSignOut() {
   await signOut(auth);
 }
 
+async function updateUsername(username) {
+  const auth = getAuth();
+  await updateProfile(auth.currentUser, { displayName: username });
+}
+
+async function updateEmailAddress(email) {
+  const auth = getAuth();
+  await updateEmail(auth.currentUser, email);
+}
+
 export {
   doCreateUserWithEmailAndPassword,
   doSocialSignIn,
@@ -80,4 +91,6 @@ export {
   doSignOut,
   doChangePassword,
   handleError,
+  updateEmailAddress,
+  updateUsername,
 };

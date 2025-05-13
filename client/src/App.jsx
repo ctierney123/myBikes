@@ -7,6 +7,7 @@ import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import AllStations from "./pages/AllStations.jsx";
 import NearbyStations from "./pages/NearbyStations.jsx";
+import Settings from "./pages/Settings.jsx";
 
 function App() {
   return (
@@ -20,8 +21,7 @@ function App() {
           <Route index element={<AllStations />} />
           <Route path="favorites" element={<h1>Favorites</h1>} />
           <Route path="nearby" element={<NearbyStations />} />
-          <Route path="profile" element={<h1>Profile</h1>} />
-          <Route path="settings" element={<h1>Settings</h1>} />
+          <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>
     </AuthProvider>
