@@ -8,6 +8,8 @@ import { AuthProvider } from "./context/AuthContext.jsx";
 import AllStations from "./pages/AllStations.jsx";
 import NearbyStations from "./pages/NearbyStations.jsx";
 import Settings from "./pages/Settings.jsx";
+import SearchStations from "./pages/SearchStations.jsx";
+import Station from "./pages/Station.jsx";
 
 function App() {
   return (
@@ -22,6 +24,9 @@ function App() {
           <Route path="favorites" element={<h1>Favorites</h1>} />
           <Route path="nearby" element={<NearbyStations />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="search" element={<SearchStations />} />
+          <Route path=":id" element={<Station />} />
+          <Route path="profile" element={<h1>Profile</h1>} />
         </Route>
       </Routes>
     </AuthProvider>
