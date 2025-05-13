@@ -20,7 +20,11 @@ const navItems = [
     icon: <MapPin className="text-white w-6 h-6" />,
     link: "/dashboard/nearby",
   },
-
+  {
+    name: "Search Stations",
+    icon: <MapPin className="text-white w-6 h-6" />,
+    link: "/dashboard/search",
+  },
   {
     name: "Settings",
     icon: <Settings className="text-white w-6 h-6" />,

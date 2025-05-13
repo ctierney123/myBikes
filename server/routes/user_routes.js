@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { client } from "../app.js";
 //import { isSignedIn, isSignedOut } from "../middleware.js";
-import { isId, isString, isUsername, isEmail } from "../helpers.js";
+import { isString, isUsername } from "../helpers.js";
 import {
   createUser,
   getAllUsers,
@@ -65,7 +65,7 @@ router
     }
 
     try {
-      userId = isId(userId, "userId");
+      userId = isString(userId, "userId");
       updateObject = isObject(updateObject, "updateObject");
 
       const updateObjectKeys = Object.keys(updateObject);
@@ -109,7 +109,7 @@ router
     const userId = req.user.uid;
 
     try {
-      userId = isId(userId);
+      userId = isString(userId, "userId");
     } catch (e) {
       return res.status(400).json({ error: e.message });
     }

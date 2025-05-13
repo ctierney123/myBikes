@@ -15,15 +15,13 @@ export default function AllStations() {
   useEffect(() => {
     async function getData() {
       const data = await fetchAllStations();
-      console.log(data);
 
-      const sortedData = data.sort((a, b) => a.station_id - b.station_id);
-      setStations(sortedData);
+      setStations(data);
 
       const firstIndex = 0;
       const lastIndex = 20;
-      const limit = sortedData.slice(firstIndex, lastIndex);
-      const nextExists = lastIndex < sortedData.length;
+      const limit = data.slice(firstIndex, lastIndex);
+      const nextExists = lastIndex < data.length;
 
       setStationsPage(limit);
       setHasViewMore(nextExists);
@@ -69,23 +67,26 @@ export default function AllStations() {
             key={station.station_id}
             className="flex-col bg-white p-4 rounded-md shadow-sm"
           >
-            <h2 className="text-xl font-semibold truncate">{station.name}</h2>
-            <p className="text-gray-600">
-              Location: {parseFloat(station.lat).toFixed(2)},{" "}
-              {parseFloat(station.lon).toFixed(2)}
-            </p>
-            <div className="flex mt-2 gap-2">
-              <Bike className="text-blue-500 w-7 h-7" />
-              <p className="text-gray-800">
-                Number of bikes: {station.num_bikes_available}
+            <Link to={`/dashboard/${station.station_id}`}>
+              <h2 className="text-xl font-semibold truncate">{station.name}</h2>
+
+              <p className="text-gray-600">
+                Location: {parseFloat(station.lat).toFixed(3)},{" "}
+                {parseFloat(station.lon).toFixed(3)}
               </p>
-            </div>
-            <div className="flex mt-2 gap-2">
-              <Anchor className="text-blue-500 w-6 h-6" />
-              <p className="text-gray-800">
-                Number of docks: {station.num_docks_available}
-              </p>
-            </div>
+              <div className="flex mt-2 gap-2">
+                <Bike className="text-blue-500 w-7 h-7" />
+                <p className="text-gray-800">
+                  Number of bikes: {station.num_bikes_available}
+                </p>
+              </div>
+              <div className="flex mt-2 gap-2">
+                <Anchor className="text-blue-500 w-6 h-6" />
+                <p className="text-gray-800">
+                  Number of docks: {station.num_docks_available}
+                </p>
+              </div>
+            </Link>
           </div>
         ))}
       </section>
