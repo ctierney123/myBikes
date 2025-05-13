@@ -1,13 +1,18 @@
 //import mongo collections, bcrypt and implement the following data functions
 import { isString, isUsername } from "../helpers.js";
 
-const createUser = async (userId, username) => {
+const createUser = async (userId, username, email=null) => {
   username = isUsername(username, "username");
-
+  if (email){
+    email = isEmail(email, "email"); 
+  }
+  
   let newUser = {
     userId,
     username,
+    ...(email && { email }),
   };
+
 
   await client.lpush("users", JSON.stringify(userId));
 
@@ -41,6 +46,17 @@ const updateUser = async (userId, updateObject) => {
     updatedUser.favorites = favorites;
     await client.lset(`${userId}/favorites`, JSON.stringify(favorites));
   }
+
+  if (updateObjectKeys.includes("email")) {
+    // you can just set email to null to remove it 
+    if (email === null) {
+      updatedUser.email = null;
+    } else {
+      email = isEmail(email, "email");
+      updatedUser.email = email;
+    }
+  }
+
 
   await client.lrem("users", 0, JSON.stringify(userId));
   await client.lpush("users", JSON.stringify(userId));

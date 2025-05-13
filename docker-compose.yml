@@ -1,6 +1,12 @@
 version: '3.8'
 
 services:
+  redis:
+    image: redis:7
+    container_name: redis-citibike
+    ports:
+      - "6379:6379"
+  
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
     container_name: es-citibike
@@ -32,8 +38,12 @@ services:
       - ./server:/app
     depends_on:
       - elasticsearch
+      - redis
+    env_file: 
+      - .env 
     environment:
       - ELASTICSEARCH_HOST=http://elasticsearch:9200
+      - REDIS_URL=redis://redis:6379
 
   client:
     build: ./client
