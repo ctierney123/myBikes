@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   redis:
@@ -6,7 +6,7 @@ services:
     container_name: redis-citibike
     ports:
       - "6379:6379"
-  
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
     container_name: es-citibike
@@ -39,8 +39,8 @@ services:
     depends_on:
       - elasticsearch
       - redis
-    env_file: 
-      - .env 
+    env_file:
+      - .env
     environment:
       - ELASTICSEARCH_HOST=http://elasticsearch:9200
       - REDIS_URL=redis://redis:6379
@@ -56,7 +56,7 @@ services:
     depends_on:
       - server
     environment:
-      - VITE_API_URL=http://localhost:4000
+      - VITE_API_URL=http://localhost:3000
 
 volumes:
   esdata:

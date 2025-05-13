@@ -10,6 +10,8 @@ import NearbyStations from "./pages/NearbyStations.jsx";
 import Settings from "./pages/Settings.jsx";
 import SearchStations from "./pages/SearchStations.jsx";
 import Station from "./pages/Station.jsx";
+import SearchPage from "./pages/SearchPage.jsx";
+import FavoriteStationsPage from "./pages/FavoriteStationsPage.jsx";
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
           <Route path="search" element={<SearchStations />} />
           <Route path=":id" element={<Station />} />
           <Route path="profile" element={<h1>Profile</h1>} />
+          <Route path="searchTest" element={<SearchPage />} />
+          <Route path="favoritez" element={<FavoriteStationsPage />} />
         </Route>
       </Routes>
     </AuthProvider>
