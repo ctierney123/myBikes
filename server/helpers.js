@@ -24,6 +24,14 @@ export function isNumber(number, varName) {
   return number;
 }
 
+export function isFLoat(float, varName) {
+  if (Number(float) !== float && float % 1 == 0) {
+    throw new Error(`${varName || "provided variable"} is not a float!`);
+  }
+
+  return float;
+}
+
 export const isArray = (arr, varName) => {
   if (!Array.isArray(arr))
     throw new Error(`${varName || "provided variable"} is not an array!`);
@@ -62,16 +70,6 @@ export function isObject(object, varName) {
     throw new Error(`${varName} is not an object`);
 
   return object;
-}
-
-export function isId(id, varName) {
-  if (!ObjectId.isValid(id))
-    throw new Error(`${varName} is not a valid object Id`);
-  if (typeof id !== "string") throw new Error(`${varName} is not a string`);
-  if (id.trim().length === 0)
-    throw new Error(`${varName}  cannot be an empty string or just spaces`);
-
-  return id.trim();
 }
 
 export function isName(name) {

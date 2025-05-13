@@ -7,6 +7,8 @@ import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import AllStations from "./pages/AllStations.jsx";
 import NearbyStations from "./pages/NearbyStations.jsx";
+import SearchStations from "./pages/SearchStations.jsx";
+import Station from "./pages/Station.jsx";
 
 function App() {
   return (
@@ -19,7 +21,9 @@ function App() {
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route path="stations/:id" element={<AllStations />} />
           <Route path="favorites" element={<h1>Favorites</h1>} />
-          <Route path="nearby/:id" element={<NearbyStations />} />
+          <Route path="nearby" element={<NearbyStations />} />
+          <Route path="search" element={<SearchStations />} />
+          <Route path=":id" element={<Station />} />
           <Route path="profile" element={<h1>Profile</h1>} />
           <Route path="settings" element={<h1>Settings</h1>} />
         </Route>

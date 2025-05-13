@@ -14,7 +14,7 @@ async function fetchAllStations() {
   return data;
 }
 
-async function fetchStationsById(id) {
+async function fetchStationById(id) {
   const response = await fetch(`${baseUrl}/stations/${id}`);
 
   const data = await response.json();
@@ -28,8 +28,10 @@ async function fetchStationsById(id) {
   return data;
 }
 
-async function fetchNearbyStations() {
-  const response = await fetch(`${baseUrl}/stations/nearby`);
+async function fetchNearbyStations(lat, long, radius) {
+  const response = await fetch(
+    `${baseUrl}/stations/nearby?lat=${lat}&long=${long}&radius=${radius}`
+  );
 
   const data = await response.json();
 
@@ -43,12 +45,12 @@ async function fetchNearbyStations() {
 }
 
 async function fetchStationsByName(name) {
-  const response = await fetch(`${baseUrl}/stations/${name}`);
+  const response = await fetch(`${baseUrl}/stations/search?name=${name}`);
 
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error("Failed to fetch nearby stations");
+    throw new Error(`Failed to fetch stations by name, ${name}`);
   }
 
   console.log(data);
@@ -57,7 +59,7 @@ async function fetchStationsByName(name) {
 }
 export {
   fetchAllStations,
-  fetchStationsById,
+  fetchStationById,
   fetchNearbyStations,
   fetchStationsByName,
 };

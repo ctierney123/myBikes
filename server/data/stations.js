@@ -1,5 +1,5 @@
 import redis from "redis";
-import { calculateDistance } from "../helpers.js";
+import { calculateDistance, isString, isFLoat } from "../helpers.js";
 export const client = redis.createClient();
 client.connect().then(() => {});
 
@@ -85,8 +85,10 @@ const getAllStationsAndStatuses = async () => {
         throw new Error(`Could not get station of id, ${id}`);
       }
 
-      await client.set(`stations`, JSON.stringify(dataMerge));
-      return dataMerge;
+      const sortedData = dataMerge.sort((a, b) => a.station_id - b.station_id);
+
+      await client.set(`stations`, JSON.stringify(sortedData));
+      return sortedData;
     } catch (e) {
       console.error(e);
     }
@@ -94,6 +96,7 @@ const getAllStationsAndStatuses = async () => {
 };
 
 const getStationById = async (id) => {
+  id = isString(id, "station id");
   let stationByIdCache = await client.get(`station/${id}`);
   if (stationByIdCache) {
     stationByIdCache = JSON.parse(stationByIdCache);
@@ -108,7 +111,7 @@ const getStationById = async (id) => {
       if (!stationById) {
         throw new Error(`Could not get station of id, ${id}`);
       }
-      await client.set(`station/${id}`, JSON.stringify(stationById));
+      //await client.set(`station/${id}`, JSON.stringify(stationById));
       return stationById;
     } catch (e) {
       console.error(e);
@@ -117,6 +120,7 @@ const getStationById = async (id) => {
 };
 
 const getStationByName = async (name) => {
+  name = isString(name, "name");
   let stationByNameCache = await client.get(`station/${name}`);
   if (stationByNameCache) {
     stationByNameCache = JSON.parse(stationByNameCache);
@@ -126,49 +130,66 @@ const getStationByName = async (name) => {
     try {
       const data = await getAllStationsAndStatuses();
 
-      const stationByName = data.find((station) => station.name.includes(name));
+      const stationByName = data.filter((station) =>
+        station.name.toLowerCase().includes(name.toLowerCase())
+      );
 
       if (!stationByName) {
         throw new Error(`Could not find stations with name, ${name}`);
       }
-      await client.set(`station/${name}`, JSON.stringify(stationByName));
-      return stationByName;
+
+      const sortedStations = stationByName.sort((a, b) =>
+        a.name.localeCompare(b.name)
+      );
+
+      await client.set(`station/${name}`, JSON.stringify(sortedStations));
+      return sortedStations;
     } catch (e) {
       console.error(e);
     }
   }
 };
 
-const getNearbyStations = async (userLat, userLong) => {
-  let nearyStationsCache = await client.get(`nearby`);
+const getNearbyStations = async (userLat, userLong, radius) => {
+  userLat = isFLoat(userLat, "userLat");
+  userLong = isFLoat(userLong, "userLong");
+  let nearyStationsCache = await client.get(`nearby/${userLat}&${userLong}`);
   if (nearyStationsCache) {
     nearyStationsCache = JSON.parse(nearyStationsCache);
 
     return nearyStationsCache;
   } else {
     try {
-      const data = await getAllStationsAndStatuses();
+      let data = await getAllStationsAndStatuses();
 
-      const nearbyStations = data.filter(
+      data.forEach(
         (station) =>
-          parseFloat(
+          (station.distance = parseFloat(
             calculateDistance(
               userLat,
               userLong,
               station.lat,
               station.lon
-            ).toFixed(2)
-          ) <= 1
+            ).toFixed(3)
+          ))
+      );
+
+      let nearbyStations = data.filter(
+        (station) => parseFloat(station.distance) <= 1
       );
 
       if (!nearbyStations) {
         throw new Error(
-          `Could not get all nearby stations within raidus of, ${rad}`
+          `Could not get all nearby stations within radius of, ${rad}`
         );
       }
-      console.log(nearbyStations);
 
-      await client.set(`nearby`, JSON.stringify(nearbyStations));
+      nearbyStations = nearbyStations.sort((a, b) => a.distance - b.distance);
+
+      await client.set(
+        `nearby/${userLat}&${userLong}`,
+        JSON.stringify(nearbyStations)
+      );
       return nearbyStations;
     } catch (e) {
       console.error(e);
