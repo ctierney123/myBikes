@@ -1,7 +1,5 @@
-import redis from "redis";
 import { calculateDistance, isString, isFLoat } from "../helpers.js";
-export const client = redis.createClient();
-client.connect().then(() => {});
+import { client } from "../app.js";
 
 const getAllStations = async () => {
   let stationCache = await client.get("stationList");
@@ -153,7 +151,9 @@ const getStationByName = async (name) => {
 const getNearbyStations = async (userLat, userLong, radius) => {
   userLat = isFLoat(userLat, "userLat");
   userLong = isFLoat(userLong, "userLong");
-  let nearyStationsCache = await client.get(`nearby/${userLat}&${userLong}`);
+  let nearyStationsCache = await client.get(
+    `nearby/${userLat}&${userLong}&${radius}`
+  );
   if (nearyStationsCache) {
     nearyStationsCache = JSON.parse(nearyStationsCache);
 
@@ -175,7 +175,7 @@ const getNearbyStations = async (userLat, userLong, radius) => {
       );
 
       let nearbyStations = data.filter(
-        (station) => parseFloat(station.distance) <= 1
+        (station) => parseFloat(station.distance) <= radius
       );
 
       if (!nearbyStations) {
@@ -187,7 +187,7 @@ const getNearbyStations = async (userLat, userLong, radius) => {
       nearbyStations = nearbyStations.sort((a, b) => a.distance - b.distance);
 
       await client.set(
-        `nearby/${userLat}&${userLong}`,
+        `nearby/${userLat}&${userLong}&${radius}`,
         JSON.stringify(nearbyStations)
       );
       return nearbyStations;

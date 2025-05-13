@@ -188,16 +188,6 @@ export default function NearbyStations() {
           </div>
         )}
       </div>
-      <div className="flex justify-center mt-4">
-        {hasViewMore && (
-          <button
-            className="bg-white p-2 px-4 border border-gray-300 hover:bg-gray-100"
-            onClick={handleNextPage}
-          >
-            <p className="text-sm">View More</p>
-          </button>
-        )}
-      </div>
     </div>
   );
 }

@@ -1,39 +1,37 @@
-import nodemailer from 'nodemailer';
-import { getStationById } from './stations.js';
-import { getFavoritesByUserId } from './favorites.js';
-import { getUserById } from './users.js';
-import dotenv from 'dotenv';
+import nodemailer from "nodemailer";
+import { getStationById } from "./stations.js";
+import { getFavoritesByUserId } from "./favorites.js";
+import { getUserById } from "./users.js";
+import dotenv from "dotenv";
 dotenv.config();
+import { client } from "../app.js";
 
 // EMAIL SETUP
 const transporter = nodemailer.createTransport({
-  host: 'smtp.sendgrid.net',
-  port: 587, 
-  secure: false, 
+  host: "smtp.sendgrid.net",
+  port: 587,
+  secure: false,
   auth: {
-    user: 'apikey', 
-    pass: process.env.SENDGRID_API_KEY
-  }
+    user: "apikey",
+    pass: process.env.SENDGRID_API_KEY,
+  },
 });
 
 transporter.verify((error) => {
   if (error) {
-    console.error('Error with SendGrid connection:', error);
+    console.error("Error with SendGrid connection:", error);
   } else {
-    console.log('Server is ready to take our messages');
+    console.log("Server is ready to take our messages");
   }
 });
-
-
-
 
 const hasBeenNotified = async (userId, stationId) => {
   return await client.get(`notification:${userId}:${stationId}`);
 };
 
 const markAsNotified = async (userId, stationId) => {
-  await client.set(`notification:${userId}:${stationId}`, '1', {
-    EX: 86400 // 24 hours
+  await client.set(`notification:${userId}:${stationId}`, "1", {
+    EX: 86400, // 24 hours
   });
 };
 
@@ -41,20 +39,19 @@ const clearNotificationFlag = async (userId, stationId) => {
   await client.del(`notification:${userId}:${stationId}`);
 };
 
-
 export const checkFavoriteStationsAvailability = async () => {
   try {
     const users = await client.lRange("users", 0, -1);
-    
+
     for (const userId of users) {
       const user = await getUserById(userId);
       if (!user.email) continue;
-      
+
       const favorites = await getFavoritesByUserId(userId);
-      
+
       for (const stationId of favorites) {
         const station = await getStationById(stationId);
-        
+
         if (station.num_bikes_available === 0) {
           if (!(await hasBeenNotified(userId, stationId))) {
             await sendStationNotification(user, station);
@@ -66,7 +63,7 @@ export const checkFavoriteStationsAvailability = async () => {
       }
     }
   } catch (error) {
-    console.error('Error checking station availability:', error);
+    console.error("Error checking station availability:", error);
   }
 };
 
@@ -74,8 +71,8 @@ export const checkFavoriteStationsAvailability = async () => {
 const sendStationNotification = async (user, station) => {
   const mailOptions = {
     from: {
-      name: 'MyBikes Notifications',
-      address: process.env.EMAIL_FROM
+      name: "MyBikes Notifications",
+      address: process.env.EMAIL_FROM,
     },
     to: user.email,
     subject: `🚴 No bikes available at ${station.name}`,
@@ -99,13 +96,13 @@ const sendStationNotification = async (user, station) => {
     `,
     // sendgrid headers
     headers: {
-      'X-SMTPAPI': JSON.stringify({
+      "X-SMTPAPI": JSON.stringify({
         filters: {
           clicktrack: { settings: { enable: 0 } },
-          opentrack: { settings: { enable: 0 } }
-        }
-      })
-    }
+          opentrack: { settings: { enable: 0 } },
+        },
+      }),
+    },
   };
 
   try {
