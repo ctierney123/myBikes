@@ -1,15 +1,18 @@
 //import mongo collections, bcrypt and implement the following data functions
-import { isId, isString, isUsername } from "../helpers.js";
+import { isString, isUsername } from "../helpers.js";
 
-const createUser = async (userId, username) => {
-  userId = isId(userId, "userId");
+const createUser = async (userId, username, email=null) => {
   username = isUsername(username, "username");
-
+  if (email){
+    email = isEmail(email, "email"); 
+  }
+  
   let newUser = {
     userId,
     username,
-    favorites: [],
+    ...(email && { email }),
   };
+
 
   await client.lpush("users", JSON.stringify(userId));
 
@@ -25,7 +28,6 @@ const createUser = async (userId, username) => {
 };
 
 const updateUser = async (userId, updateObject) => {
-  userId = isId(userId, "userId");
   updateObject = isObject(updateObject, "updateObject");
   const updateObjectKeys = Object.keys(updateObject);
   const updatedUser = await getUserById(userId);
@@ -45,6 +47,17 @@ const updateUser = async (userId, updateObject) => {
     await client.lset(`${userId}/favorites`, JSON.stringify(favorites));
   }
 
+  if (updateObjectKeys.includes("email")) {
+    // you can just set email to null to remove it 
+    if (email === null) {
+      updatedUser.email = null;
+    } else {
+      email = isEmail(email, "email");
+      updatedUser.email = email;
+    }
+  }
+
+
   await client.lrem("users", 0, JSON.stringify(userId));
   await client.lpush("users", JSON.stringify(userId));
   await client.set(`user/${userId}`, JSON.stringify(updatedUserr));
@@ -59,8 +72,6 @@ const updateUser = async (userId, updateObject) => {
 };
 
 const removeUser = async (userId) => {
-  userId = isId(userId, "userId");
-
   let tempCache = client.get(`user/${userId}`);
 
   await client.lrem("users", 0, JSON.stringify(userId));
@@ -87,8 +98,6 @@ const getAllUsers = async () => {
 };
 
 const getUserById = async (userId) => {
-  userId = isId(userId, "userId");
-
   let userCache = await client.get(`user/${userId}`);
   if (!userCache) {
     throw new Error(`Could not get user with id, ${userId}`);
@@ -98,24 +107,4 @@ const getUserById = async (userId) => {
   return userCache;
 };
 
-const getFavoritesByUserId = async (userId) => {
-  userId = isId(userId, "userId");
-
-  let favoritesCache = await client.lrange(`${userId}/favorites`, 0, -1);
-  if (favoritesCache) {
-    favoritesCache = JSON.parse(favoritesCache);
-
-    return favoritesCache;
-  } else {
-    throw new Error(`Could not get all favorite with userId, ${userId}`);
-  }
-};
-
-export {
-  createUser,
-  getUserById,
-  updateUser,
-  removeUser,
-  getAllUsers,
-  getFavoritesByUserId,
-};
+export { createUser, getUserById, updateUser, removeUser, getAllUsers };

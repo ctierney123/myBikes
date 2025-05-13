@@ -110,7 +110,7 @@ export function isPassword(password) {
   if (password.includes(" "))
     throw new Error("password cannot contain a space");
   if (password.length < 8)
-    throw new Error("password must be atleast 8 characters long");
+    throw new Error("password must be at least 8 characters long");
   if (!/[A-Z]/.test(password))
     throw new Error("password must contain atleast one uppercase character");
   if (!/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(password))
@@ -135,4 +135,19 @@ export const calculateDistance = (lat1, lon1, lat2, lon2) => {
   const distance = R * c;
 
   return distance;
+};
+
+
+export const isEmail = (email, name = 'email') => {
+  // allows null/undefined to remove email
+  if (email === null || email === undefined) return null;
+  
+  if (typeof email !== 'string') throw new Error(`${name} must be a string or null`);
+  email = email.trim();
+  if (email.length === 0) return null;
+  
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) throw new Error(`${name} must be a valid email address`);
+  
+  return email.toLowerCase();
 };
