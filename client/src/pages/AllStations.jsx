@@ -81,26 +81,23 @@ export default function AllStations() {
             key={station.station_id}
             className="flex-col bg-white p-4 rounded-md shadow-sm"
           >
-            <Link to={`/dashboard/${station.station_id}`}>
-              <h2 className="text-xl font-semibold truncate">{station.name}</h2>
-
-              <p className="text-gray-600">
-                Location: {parseFloat(station.lat).toFixed(3)},{" "}
-                {parseFloat(station.lon).toFixed(3)}
+            <h2 className="text-xl font-semibold truncate">{station.name}</h2>
+            <p className="text-gray-600">
+              Location: {parseFloat(station.lat).toFixed(2)},{" "}
+              {parseFloat(station.lon).toFixed(2)}
+            </p>
+            <div className="flex mt-2 gap-2">
+              <Bike className="text-blue-500 w-7 h-7" />
+              <p className="text-gray-800">
+                Number of bikes: {station.num_bikes_available}
               </p>
-              <div className="flex mt-2 gap-2">
-                <Bike className="text-blue-500 w-7 h-7" />
-                <p className="text-gray-800">
-                  Number of bikes: {station.num_bikes_available}
-                </p>
-              </div>
-              <div className="flex mt-2 gap-2">
-                <Anchor className="text-blue-500 w-6 h-6" />
-                <p className="text-gray-800">
-                  Number of docks: {station.num_docks_available}
-                </p>
-              </div>
-            </Link>
+            </div>
+            <div className="flex mt-2 gap-2">
+              <Anchor className="text-blue-500 w-6 h-6" />
+              <p className="text-gray-800">
+                Number of docks: {station.num_docks_available}
+              </p>
+            </div>
           </div>
         ))}
       </section>

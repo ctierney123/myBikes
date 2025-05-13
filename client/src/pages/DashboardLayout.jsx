@@ -18,11 +18,6 @@ const navItems = [
     link: "/dashboard/nearby",
   },
   {
-    name: "Search Stations",
-    icon: <MapPin className="text-white w-6 h-6" />,
-    link: "/dashboard/search",
-  },
-  {
     name: "Profile",
     icon: <UserRound className="text-white w-6 h-6" />,
     link: "/dashboard/profile",
