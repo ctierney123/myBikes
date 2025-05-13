@@ -8,7 +8,9 @@ dotenv.config();
 
 const app = express();
 
-export const client = redis.createClient();
+export const client = redis.createClient({
+  url: process.env.REDIS_URL || "redis://redis:6379",
+});
 client.connect().then(() => {});
 
 app.use(express.json());

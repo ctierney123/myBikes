@@ -2,14 +2,13 @@ import { Client } from '@elastic/elasticsearch';
 
 const client = new Client({ node: 'http://localhost:9200' });
 
-export { client };  // Add this line to export 'client'
+export { client };
 
 export async function ensureFavoriteStationsIndexExists() {
   const indexName = 'favorite_stations';
   const exists = await client.indices.exists({ index: indexName });
 
   if (!exists) {
-    // Index doesn't exist, create it
     await client.indices.create({
       index: indexName,
       body: {
@@ -26,10 +25,38 @@ export async function ensureFavoriteStationsIndexExists() {
         }
       }
     });
-    console.log(`✅ Created index "${indexName}"`);
+    console.log(`Created index "${indexName}"`);
   } else {
-    // Index exists, update mappings if necessary
     const mapping = await client.indices.getMapping({ index: indexName });
-    console.log(`ℹ️ Index "${indexName}" already exists. Current mapping:`, mapping);
+    console.log(`Index "${indexName}" already exists. Current mapping:`, mapping);
+  }
+}
+
+export async function ensureUserPreferencesIndexExists() {
+  const indexName = 'user_preferences';
+  const exists = await client.indices.exists({ index: indexName });
+
+  if (!exists) {
+    await client.indices.create({
+      index: indexName,
+      body: {
+        mappings: {
+          properties: {
+            preferences: {
+              type: 'object',
+              properties: {
+                emailNotifications: { type: 'boolean' },
+                dailyDigest: { type: 'boolean' },
+                digestTime: { type: 'keyword' }
+              }
+            }
+          }
+        }
+      }
+    });
+    console.log(`Created index "${indexName}"`);
+  } else {
+    const mapping = await client.indices.getMapping({ index: indexName });
+    console.log(`Index "${indexName}" already exists. Current mapping:`, mapping);
   }
 }

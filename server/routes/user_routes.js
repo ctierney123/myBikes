@@ -122,34 +122,56 @@ router
     }
   });
 
-  // not for prod
-router.get('/test-email', async (_req, res) => {
+router.get('/:id/notification-preferences', async (req, res) => {
   try {
-    const testUser = {
-      email: 'connortierneymisc@gmail.com', 
-      username: 'connortierneymisc@gmail.com',
-      userId: 'test-user-123'
+    const userId = req.params.id;
+    const user = await getUserById(userId);
+    
+    const preferences = user.notificationPreferences || {
+      emailNotifications: false,
+      dailyDigest: false,
+      digestTime: "08:00"
     };
     
+    return res.status(200).json(preferences);
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
+  }
+});
+
+router.put('/:id/notification-preferences', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { emailNotifications, dailyDigest, digestTime } = req.body;
     
-    const testStation = {
-      name: 'Central Park Station',
-      station_id: 'c-123',
-      num_bikes_available: 0
-    };
+    if (typeof emailNotifications !== 'boolean' || 
+        typeof dailyDigest !== 'boolean' ||
+        !/^([01]\d|2[0-3]):([0-5]\d)$/.test(digestTime)) {
+      return res.status(400).json({ error: 'Invalid preferences format' });
+    }
     
-    
-    await sendStationNotification(testUser, testStation);
-    res.json({ 
-      success: true,
-      message: 'Test email sent successfully' 
+    const updatedUser = await updateUser(userId, { 
+      notificationPreferences: { 
+        emailNotifications, 
+        dailyDigest, 
+        digestTime 
+      }
     });
+    
+    return res.status(200).json(updatedUser.notificationPreferences);
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
+  }
+});
+
+// remove in prod, just test
+router.get('/test-daily-digest', async (_req, res) => {
+  try {
+    await sendDailyDigest();
+    res.json({ success: true, message: 'Test daily digest sent' });
   } catch (error) {
-    console.error('Test email failed:', error);
-    res.status(500).json({ 
-      error: 'Test email failed',
-      details: error.message 
-    });
+    console.error('Test daily digest failed:', error);
+    res.status(500).json({ error: 'Test daily digest failed' });
   }
 });
 

@@ -11,6 +11,11 @@ const createUser = async (userId, username, email=null) => {
     userId,
     username,
     ...(email && { email }),
+    notificationPreferences: {
+      emailNotifications: false,
+      dailyDigest: false,
+      digestTime: "08:00"
+    }
   };
 
 
@@ -55,6 +60,9 @@ const updateUser = async (userId, updateObject) => {
       email = isEmail(email, "email");
       updatedUser.email = email;
     }
+  }
+  if (updateObjectKeys.includes("notificationPreferences")) {
+    updatedUser.notificationPreferences = updateObject.notificationPreferences;
   }
 
 

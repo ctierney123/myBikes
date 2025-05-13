@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import { client, ensureFavoriteStationsIndexExists } from './elasticsearchClient.js';
+import { client, ensureFavoriteStationsIndexExists, ensureUserPreferencesIndexExists } from './elasticsearchClient.js';
 
 const app = express();
 const PORT = 4000;
@@ -11,6 +11,7 @@ app.use(bodyParser.json());
 
 // Ensure the favorite_stations index exists on server start
 ensureFavoriteStationsIndexExists();
+ensureUserPreferencesIndexExists();
 
 // Search route (searches the all_stations index)
 app.get('/api/search', async (req, res) => {
@@ -138,7 +139,61 @@ app.get('/api/favorites', async (req, res) => {
 });
 
 
+app.get('/api/users/:userId/notification-preferences', async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const response = await client.get({
+      index: 'user_preferences',
+      id: userId
+    });
+
+    res.json(response._source.preferences);
+  } catch (err) {
+    if (err.meta?.statusCode === 404) {
+      // Return default preferences if not found
+      return res.json({
+        emailNotifications: false,
+        dailyDigest: false,
+        digestTime: "08:00"
+      });
+    }
+
+    console.error('Get preferences error:', err.meta?.body?.error || err);
+    res.status(500).json({ error: 'Failed to fetch preferences' });
+  }
+});
+
+// Update notification preferences
+app.put('/api/users/:userId/notification-preferences', async (req, res) => {
+  const { userId } = req.params;
+  const preferences = req.body;
+
+  if (!preferences) {
+    return res.status(400).json({ error: 'Missing preferences data' });
+  }
+
+  try {
+    await client.index({
+      index: 'user_preferences',
+      id: userId,
+      body: {
+        preferences: {
+          emailNotifications: preferences.emailNotifications || false,
+          dailyDigest: preferences.dailyDigest || false,
+          digestTime: preferences.digestTime || "08:00"
+        }
+      },
+      refresh: 'wait_for'
+    });
+
+    res.json({ message: 'Preferences updated successfully' });
+  } catch (err) {
+    console.error('Update preferences error:', err.meta?.body?.error || err);
+    res.status(500).json({ error: 'Failed to update preferences' });
+  }
+});
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

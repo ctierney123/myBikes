@@ -82,7 +82,7 @@ export default function EditAccountModal({
             />
           </div>
           <div className="flex flex-col gap-2">
-            <label className="font-medium">Date Formed</label>
+            <label className="font-medium">Email</label>
             <input
               className="bg-white border border-gray-500 rounded-md px-2 py-1 placeholder:text-sm"
               type="email"

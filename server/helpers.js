@@ -144,7 +144,7 @@ export const isEmail = (email, name = 'email') => {
   email = email.trim();
   if (email.length === 0) return null;
   
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (!emailRegex.test(email)) throw new Error(`${name} must be a valid email address`);
   
   return email.toLowerCase();

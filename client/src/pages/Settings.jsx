@@ -1,6 +1,8 @@
 import { useAuth } from "../context/AuthContext.jsx";
 import { Settings as SettingsIcon, SquarePen } from "lucide-react";
 import EditAccountModal from "../components/EditAccountModal.jsx";
+import NotificationSettings from "../components/NotificationSettings.jsx";
+
 import { useState } from "react";
 
 export default function Settings() {
@@ -53,10 +55,11 @@ export default function Settings() {
         </section>
 
         <section className="flex-col bg-white rounded-md p-4 shadow-sm mb-6 w-full max-w-3xl">
-          <h2 className="text-xl font-semibold">Notificiaton Settings</h2>
-          <p className="text-gray-500">
+          <h2 className="text-xl font-semibold">Notification Settings</h2>
+          <p className="text-gray-500 mb-4">
             Manage your notification preferences for updates and alerts.
           </p>
+          <NotificationSettings />
         </section>
       </div>
       {showAccountModal && (
