@@ -15,15 +15,13 @@ export default function AllStations() {
   useEffect(() => {
     async function getData() {
       const data = await fetchAllStations();
-      console.log(data);
 
-      const sortedData = data.sort((a, b) => a.station_id - b.station_id);
-      setStations(sortedData);
+      setStations(data);
 
       const firstIndex = 0;
       const lastIndex = 20;
-      const limit = sortedData.slice(firstIndex, lastIndex);
-      const nextExists = lastIndex < sortedData.length;
+      const limit = data.slice(firstIndex, lastIndex);
+      const nextExists = lastIndex < data.length;
 
       setStationsPage(limit);
       setHasViewMore(nextExists);

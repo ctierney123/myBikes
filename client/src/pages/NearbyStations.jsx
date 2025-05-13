@@ -63,26 +63,6 @@ export default function NearbyStations() {
     setHasViewMore(nextExists);
   }
   useEffect(() => {
-    async function getData() {
-      const data = await fetchNearbyStations();
-      console.log(data);
-
-      const sortedData = data.sort((a, b) => a.station_id - b.station_id);
-      setStations(sortedData);
-
-      const firstIndex = 0;
-      const lastIndex = 20;
-      const limit = sortedData.slice(firstIndex, lastIndex);
-      const nextExists = lastIndex < sortedData.length;
-
-      setStationsPage(limit);
-      setHasViewMore(nextExists);
-    }
-
-    getData();
-  }, []);
-
-  useEffect(() => {
     const firstIndex = 0;
     const lastIndex = 20 + currentPage * 20;
     const limit = stations.slice(firstIndex, lastIndex);
