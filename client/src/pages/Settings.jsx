@@ -52,12 +52,6 @@ export default function Settings() {
           </div>
         </section>
 
-        <section className="flex-col bg-white rounded-md p-4 shadow-sm mb-6 w-full max-w-3xl">
-          <h2 className="text-xl font-semibold">Notificiaton Settings</h2>
-          <p className="text-gray-500">
-            Manage your notification preferences for updates and alerts.
-          </p>
-        </section>
       </div>
       {showAccountModal && (
         <EditAccountModal
