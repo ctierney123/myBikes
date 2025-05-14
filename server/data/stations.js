@@ -109,7 +109,7 @@ const getStationById = async (id) => {
       if (!stationById) {
         throw new Error(`Could not get station of id, ${id}`);
       }
-      //await client.set(`station/${id}`, JSON.stringify(stationById));
+      await client.set(`station/${id}`, JSON.stringify(stationById));
       return stationById;
     } catch (e) {
       console.error(e);

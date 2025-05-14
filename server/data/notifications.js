@@ -43,6 +43,10 @@ export const checkFavoriteStationsAvailability = async () => {
   try {
     const users = await client.lRange("users", 0, -1);
 
+    const cacheKeys = (await client.keys("*")).filter((key) => key !== "users");
+
+    cacheKeys.forEach(async (key) => await client.del(key));
+
     for (const userId of users) {
       const user = await getUserById(userId);
       if (!user.email) continue;
@@ -84,7 +88,7 @@ const sendStationNotification = async (user, station) => {
         <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;">
           <h3 style="margin-top: 0;">${station.name}</h3>
           <p>Station ID: ${station.station_id}</p>
-          <p>Last updated: ${new Date().toLocaleString()}</p>
+          <p>Last updated: ${new Date().toISOString()}</p>
         </div>
         <p>Please consider checking another nearby station.</p>
         <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">

@@ -29,6 +29,9 @@ async function fetchStationById(id) {
 }
 
 async function fetchNearbyStations(lat, long, radius) {
+  lat = lat.trim();
+  long = long.trim();
+  radius = radius.trim();
   const response = await fetch(
     `${baseUrl}/stations/nearby?lat=${lat}&long=${long}&radius=${radius}`
   );
@@ -45,6 +48,8 @@ async function fetchNearbyStations(lat, long, radius) {
 }
 
 async function fetchStationsByName(name) {
+  name = encodeURIComponent(name);
+
   const response = await fetch(`${baseUrl}/stations/search?name=${name}`);
 
   const data = await response.json();
