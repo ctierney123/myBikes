@@ -4,7 +4,7 @@ export const esClient = new Client({ node: "http://elasticsearch:9200" });
 export async function ensureFavoriteStationsIndexExists() {
   const indexName = "favorite_stations";
   const exists = await esClient.indices.exists({ index: indexName });
-  f;
+  
   if (!exists) {
     // Index doesn't exist, create it
     await esClient.indices.create({

@@ -12,6 +12,7 @@ router.get("/search", async (req, res) => {
   const { q, page = 0 } = req.query;
   const pageSize = 10;
 
+  console.log("hello: " + q);
   if (!q) return res.status(400).json({ error: "Missing query" });
 
   const body = {
