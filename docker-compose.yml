@@ -5,6 +5,19 @@ services:
     ports:
       - "6379:6379"
 
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    container_name: es-citibike
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
   server:
     build: ./server
     container_name: mybikes-server
@@ -13,10 +26,12 @@ services:
     volumes:
       - ./server:/app
     depends_on:
+      - elasticsearch
       - redis
     env_file:
       - .env
     environment:
+      - ELASTICSEARCH_HOST=http://elasticsearch:9200
       - REDIS_URL=redis://redis:6379
 
   client:
