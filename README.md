@@ -1,3 +1,9 @@
 CS 554 Final Project
 
-run node server/routes/server.js for favorites and search backend
+SETUP:
+
+Navigate to myBikes root, and run the command: docker-compose up --build
+
+After Docker finishes setup, the website will be available at:
+http://localhost:5173/
+
