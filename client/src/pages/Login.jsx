@@ -7,6 +7,7 @@ import {
 } from "../firebase/functions.js";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useEffect } from "react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -14,8 +15,20 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
+  useEffect(() => {
+    if (currentUser) {
+      navigate("/dashboard");
+    }
+  });
+
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    if (!email || !password) {
+      alert("Please fill in all fields");
+      return;
+    }
+
     try {
       await doSignInWithEmailAndPassword(email, password);
       navigate("/dashboard");
@@ -24,10 +37,6 @@ export default function LoginPage() {
       alert(handleError(error.message));
     }
   };
-
-  if (currentUser) {
-    navigate("/dashboard");
-  }
 
   return (
     <div className="w-[100vw] h-[100vh] bg-[#f1f5f9]">

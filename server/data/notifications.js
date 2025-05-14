@@ -92,10 +92,6 @@ const sendStationNotification = async (user, station) => {
         </div>
         <p>Please consider checking another nearby station.</p>
         <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-        <p style="font-size: 0.9em; color: #7f8c8d;">
-          <a href="unsubscribe placeholder link" style="color: #3498db;">Unsubscribe</a> | 
-          <a href="settings placeholder link" style="color: #3498db;">Notification Preferences</a>
-        </p>
       </div>
     `,
     // sendgrid headers

@@ -13,19 +13,38 @@ import {
   GithubAuthProvider,
   AuthErrorCodes,
   updateEmail,
+  sendEmailVerification,
 } from "firebase/auth";
 
 function handleError(errorMessage) {
   if (errorMessage.includes(AuthErrorCodes.INVALID_LOGIN_CREDENTIALS)) {
-    return "Incorrect email or password";
+    return "Incorrect email or password.";
   } else if (
     errorMessage.includes(AuthErrorCodes.TOO_MANY_ATTEMPTS_TRY_LATER)
   ) {
-    return "Too many attempts try again later or reset password";
+    return "Too many attempts. Try again later or reset your password.";
   } else if (errorMessage.includes(AuthErrorCodes.INVALID_EMAIL)) {
-    return "Invalid email address";
+    return "Invalid email address.";
+  } else if (errorMessage.includes(AuthErrorCodes.USER_DISABLED)) {
+    return "This account has been disabled.";
+  } else if (errorMessage.includes(AuthErrorCodes.WEAK_PASSWORD)) {
+    return "Password is too weak. Please choose a stronger one.";
+  } else if (errorMessage.includes(AuthErrorCodes.EMAIL_EXISTS)) {
+    return "Email already in use.";
+  } else if (errorMessage.includes(AuthErrorCodes.OPERATION_NOT_ALLOWED)) {
+    return "This operation is not allowed. Please contact support.";
+  } else if (errorMessage.includes(AuthErrorCodes.POPUP_BLOCKED)) {
+    return "Popup was blocked by the browser. Please allow popups and try again.";
+  } else if (errorMessage.includes(AuthErrorCodes.POPUP_CLOSED_BY_USER)) {
+    return "Popup closed before completing sign in.";
+  } else if (errorMessage.includes(AuthErrorCodes.EXPIRED_POPUP_REQUEST)) {
+    return "Sign-in popup expired. Please try again.";
+  } else if (errorMessage.includes(AuthErrorCodes.CREDENTIAL_ALREADY_IN_USE)) {
+    return "This credential is already associated with another account.";
+  } else if (errorMessage.includes(AuthErrorCodes.INVALID_PASSWORD)) {
+    return "Invalid password. Please try again.";
   } else {
-    return errorMessage;
+    return "An unknown error occurred. Please try again.";
   }
 }
 
