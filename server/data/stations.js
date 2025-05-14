@@ -10,9 +10,13 @@ const getAllStations = async () => {
   } else {
     try {
       const res = await fetch(
-        `https://gbfs.citibikenyc.com/gbfs/en/station_information.json`,
+        "https://cors-anywhere.herokuapp.com/https://gbfs.citibikenyc.com/gbfs/en/station_information.json",
         {
           method: "GET",
+          headers: {
+            "Origin": "example.com",
+            "Content-Type": "application/json",
+          },
         }
       );
 
@@ -38,10 +42,14 @@ const getAllStatuses = async () => {
   } else {
     try {
       const res = await fetch(
-        `https://gbfs.citibikenyc.com/gbfs/en/station_status.json`,
-        {
+        `https://cors-anywhere.herokuapp.com/https://gbfs.citibikenyc.com/gbfs/en/station_status.json`,
+          {
           method: "GET",
-        }
+          headers: {
+            "Origin": "example.com",
+            "Content-Type": "application/json",
+          },
+  }
       );
 
       if (!res.ok) {

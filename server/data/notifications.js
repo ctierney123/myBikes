@@ -254,4 +254,4 @@ const generateDailyDigestHtml = (user, stations) => {
 };
 
 
-export { sendStationNotification, sendDailyDigest };
+export { sendStationNotification };

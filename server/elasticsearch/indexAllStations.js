@@ -2,7 +2,11 @@ import fetch from 'node-fetch';
 import client from './elasticsearchClient.js';
 
 async function indexAllStations() {
-  const res = await fetch('https://gbfs.citibikenyc.com/gbfs/en/station_information.json');
+  const res = await fetch('https://cors-anywhere.herokuapp.com/https://gbfs.citibikenyc.com/gbfs/en/station_information.json', {
+    headers: {
+      'Origin': 'example.com'
+    }
+  });
   const data = await res.json();
   const stations = data.data.stations;
 

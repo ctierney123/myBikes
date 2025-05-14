@@ -11,7 +11,11 @@ const client = new Client({
 
 async function fetchAndIndexStations() {
   try {
-    const response = await fetch('https://gbfs.citibikenyc.com/gbfs/en/station_information.json');
+    const response = await fetch('https://cors-anywhere.herokuapp.com/https://gbfs.citibikenyc.com/gbfs/en/station_information.json', {
+      headers: {
+        'Origin': 'example.com'
+      }
+    });
     const data = await response.json();
     const stations = data.data.stations;
 
