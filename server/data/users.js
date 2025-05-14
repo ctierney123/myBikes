@@ -11,6 +11,11 @@ const createUser = async (userId, username, email=null) => {
     userId,
     username,
     ...(email && { email }),
+    notificationPreferences: {
+      emailNotifications: false,
+      dailyDigest: false,
+      digestTime: "08:00"
+    }
   };
 
 
@@ -57,6 +62,9 @@ const updateUser = async (userId, updateObject) => {
     }
   }
 
+  if (updateObjectKeys.includes("notificationPreferences")) {
+    updatedUser.notificationPreferences = updateObject.notificationPreferences;
+  }
 
   await client.lrem("users", 0, JSON.stringify(userId));
   await client.lpush("users", JSON.stringify(userId));
