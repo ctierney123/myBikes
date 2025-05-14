@@ -23,7 +23,6 @@ export default function EditAccountModal({
   isOpen,
   handleClose,
   updateUsernameState,
-  updateEmailState,
 }) {
   const { currentUser } = useAuth();
 
@@ -47,13 +46,7 @@ export default function EditAccountModal({
       updateUsernameState(username);
     } catch (error) {
       console.error("Error updating username:", error);
-    }
-
-    try {
-      await updateEmailAddress(email);
-      updateEmailState(email);
-    } catch (error) {
-      console.error("Error updating email:", error);
+      alert(error.message);
     }
 
     handleCloseEditModal();
@@ -81,16 +74,7 @@ export default function EditAccountModal({
               placeholder="Enter your username"
             />
           </div>
-          <div className="flex flex-col gap-2">
-            <label className="font-medium">Date Formed</label>
-            <input
-              className="bg-white border border-gray-500 rounded-md px-2 py-1 placeholder:text-sm"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-            />
-          </div>
+
           <div className="flex justify-end mt-4 gap-2">
             <button
               type="button"

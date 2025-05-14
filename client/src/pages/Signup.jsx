@@ -7,6 +7,7 @@ import {
 } from "../firebase/functions.js";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useEffect } from "react";
 
 export default function SignupPage() {
   const [username, setUsername] = useState("");
@@ -16,12 +17,65 @@ export default function SignupPage() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
+  useEffect(() => {
+    if (currentUser) {
+      navigate("/dashboard");
+    }
+  });
+
   const handleSignup = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       alert("Passwords do not match");
       return;
     }
+
+    if (!username || !email || !password || !confirmPassword) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    if (username.length < 5 || username.length > 25) {
+      alert("Username must be between 5-25 characters in length");
+      return;
+    }
+
+    try {
+      if (!isNaN(Number(username)))
+        throw new Error("username cannot only contain numbers");
+
+      const regex = /[^A-Za-z0-9]/;
+
+      if (regex.test(username))
+        throw new Error(
+          "username cannot contain special characters and spaces"
+        );
+
+      if (username.length < 5)
+        throw new Error("username must be atleast 5 characters long");
+
+      if (password.includes(" "))
+        throw new Error("password cannot contain a space");
+
+      if (password.length < 8)
+        throw new Error("password must be at least 8 characters long");
+
+      if (!/[A-Z]/.test(password))
+        throw new Error(
+          "password must contain atleast one uppercase character"
+        );
+
+      if (!/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(password))
+        throw new Error("password must contain atleast one special character");
+
+      if (!/\d/.test(password))
+        throw new Error("password must contain atleast one number");
+    } catch (error) {
+      console.log(error);
+      alert(error.message);
+      return;
+    }
+
     try {
       await doCreateUserWithEmailAndPassword(email, password, username);
       navigate("/login");
@@ -31,10 +85,6 @@ export default function SignupPage() {
       alert(handleError(error.message));
     }
   };
-
-  if (currentUser) {
-    navigate("/dashboard");
-  }
 
   return (
     <div className="w-[100vw] h-[100vh] bg-[#f1f5f9]">

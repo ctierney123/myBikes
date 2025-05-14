@@ -26,7 +26,7 @@ async function addFavoriteStation(stationId) {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error("Failed to add favorite station");
+    throw new Error(data.error);
   }
 
   console.log(data);
@@ -46,7 +46,7 @@ async function removeFavoriteStation(stationId) {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error("Failed to remove favorite station");
+    throw new Error(data.error);
   }
 
   console.log(data);

@@ -135,17 +135,18 @@ export const calculateDistance = (lat1, lon1, lat2, lon2) => {
   return distance;
 };
 
-
-export const isEmail = (email, name = 'email') => {
+export const isEmail = (email, name = "email") => {
   // allows null/undefined to remove email
   if (email === null || email === undefined) return null;
-  
-  if (typeof email !== 'string') throw new Error(`${name} must be a string or null`);
+
+  if (typeof email !== "string")
+    throw new Error(`${name} must be a string or null`);
   email = email.trim();
   if (email.length === 0) return null;
-  
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) throw new Error(`${name} must be a valid email address`);
-  
+  if (!emailRegex.test(email))
+    throw new Error(`${name} must be a valid email address`);
+
   return email.toLowerCase();
 };

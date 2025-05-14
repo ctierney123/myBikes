@@ -32,7 +32,7 @@ const addFavorite = async (userId, stationId) => {
   const parsedCache = favoritesCache.map((item) => JSON.parse(item));
 
   if (parsedCache.includes(stationId)) {
-    throw new Error(`Station ID ${stationId} already exists in favorites`);
+    throw new Error(`Station already exists in favorites`);
   }
 
   try {
@@ -45,7 +45,7 @@ const addFavorite = async (userId, stationId) => {
 
   const data = await getAllStationsAndStatuses();
 
-  res = parsedCache.map((item) => {
+  const res = parsedCache.map((item) => {
     const station = data.find((station) => station.station_id === item);
     return station;
   });
@@ -60,7 +60,7 @@ const removeFavorite = async (userId, stationId) => {
     throw new Error(`Could not get all favorite with userId, ${userId}`);
   }
 
-  const parsedCache = favoritesCache.map((item) => JSON.parse(item));
+  let parsedCache = favoritesCache.map((item) => JSON.parse(item));
 
   if (!parsedCache.includes(stationId)) {
     throw new Error(`Station ID ${stationId} does not exist in favorites`);
@@ -72,9 +72,11 @@ const removeFavorite = async (userId, stationId) => {
     throw new Error(`Could not remove favorite with userId, ${userId}`);
   }
 
-  const res = parsedCache.filter((item) => item !== stationId);
+  parsedCache = parsedCache.filter((item) => item !== stationId);
 
-  res = parsedCache.map((item) => {
+  const data = await getAllStationsAndStatuses();
+
+  const res = parsedCache.map((item) => {
     const station = data.find((station) => station.station_id === item);
     return station;
   });
