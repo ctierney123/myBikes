@@ -2,8 +2,37 @@ import { Link } from "react-router-dom";
 import { LogOut } from "lucide-react";
 import { doSignOut } from "../firebase/functions.js";
 import { useNavigate } from "react-router-dom";
+import { Star, Settings, UserRound, TrainFront, MapPin } from "lucide-react";
 
-export default function SideNav({ navItems }) {
+const navItems = [
+  {
+    name: "All stations",
+    icon: <TrainFront className="text-white w-6 h-6" />,
+    link: "/dashboard",
+  },
+  {
+    name: "Favorite Stations",
+    icon: <Star className="text-white w-6 h-6" />,
+    link: "/dashboard/favorites",
+  },
+  {
+    name: "Nearby Stations",
+    icon: <MapPin className="text-white w-6 h-6" />,
+    link: "/dashboard/nearby",
+  },
+  {
+    name: "Search Stations",
+    icon: <MapPin className="text-white w-6 h-6" />,
+    link: "/dashboard/search",
+  },
+  {
+    name: "Settings",
+    icon: <Settings className="text-white w-6 h-6" />,
+    link: "/dashboard/settings",
+  },
+];
+
+export default function SideNav() {
   const navigate = useNavigate();
 
   const handleLogout = async () => {

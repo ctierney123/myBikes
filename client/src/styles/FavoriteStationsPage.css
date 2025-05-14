@@ -1,0 +1,123 @@
+.favorites-page {
+    padding: 2rem;
+    background: #f0f8ff;
+    font-family: 'Segoe UI', sans-serif;
+    color: #333;
+  }
+  
+  .station-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .station-card {
+    background-color: #fff;
+    border: 2px solid #add8e6;
+    padding: 1rem;
+    border-radius: 10px;
+    width: 300px;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .button-group {
+    margin-top: 10px;
+  }
+  
+  .view-btn, .remove-btn {
+    margin-right: 10px;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .view-btn {
+    background-color: #0077cc;
+    color: white;
+  }
+  
+  .remove-btn {
+    background-color: #ff4444;
+    color: white;
+  }
+  
+  .message {
+    color: green;
+    margin: 1rem 0;
+  }
+  
+  .error-msg {
+    color: red;
+    margin: 1rem 0;
+  }
+  
+  /* Modal styling */
+  .modal {
+    background: white;
+    padding: 2rem;
+    max-width: 500px;
+    margin: auto;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  }
+  
+  .overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+  
+  .close-btn {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: #666;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+
+  .modal-content {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    color: #333;
+  }
+  
+  .modal-content h2 {
+    margin-top: 0;
+    font-size: 1.6rem;
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 0.5rem;
+    color: #4CAF50;
+  }
+  
+  .modal-content p {
+    font-size: 1.05rem;
+    margin: 0;
+    padding: 6px 0;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .modal-content p:last-child {
+    border-bottom: none;
+  }
+  
+  .modal-content button {
+    align-self: flex-end;
+    padding: 0.5rem 1.2rem;
+    background-color: #4CAF50;
+    border: 2px solid #388E3C;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 1rem;
+    transition: background-color 0.2s ease;
+  }
+  
+  .modal-content button:hover {
+    background-color: #388E3C;
+  }
+  

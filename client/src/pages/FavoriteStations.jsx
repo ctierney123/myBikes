@@ -1,20 +1,21 @@
-import { Bike, Anchor, Star } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
-import { fetchAllStations } from "../data/stations.js";
 import { useState, useEffect } from "react";
+import { Bike, Anchor, StarOff } from "lucide-react";
+import { Link } from "react-router-dom";
+import { fetchFavoriteStations } from "../data/favorites.js";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
-import { addFavoriteStation } from "../data/favorites.js";
+import { removeFavoriteStation } from "../data/favorites.js";
 
-export default function AllStations() {
-  const navigate = useNavigate();
+export default function FavoriteStations() {
   const [stations, setStations] = useState([]);
   const [stationsPage, setStationsPage] = useState([]);
   const [hasViewMore, setHasViewMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function getData() {
-      const data = await fetchAllStations();
+      setLoading(true);
+      const data = await fetchFavoriteStations();
 
       setStations(data);
 
@@ -28,6 +29,7 @@ export default function AllStations() {
     }
 
     getData();
+    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -45,17 +47,20 @@ export default function AllStations() {
     setCurrentPage(nextPage);
   };
 
-  const addFavorite = async (stationId) => {
+  const removeFavorite = async (stationId) => {
     try {
-      await addFavoriteStation(stationId);
-      alert("Added to favorites");
+      await removeFavoriteStation(stationId);
+      alert("Removed from favorites");
+      setStations((prevStations) =>
+        prevStations.filter((station) => station.station_id !== stationId)
+      );
     } catch (error) {
-      console.error("Error adding favorite:", error);
+      console.error("Error removing favorite:", error);
       alert(error.message);
     }
   };
 
-  if (!stations || stations.length === 0) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center w-full h-full">
         <LoadingSpinner />
@@ -66,9 +71,9 @@ export default function AllStations() {
   return (
     <div className="w-full h-full flex flex-col p-8 overflow-y-auto">
       <section className="flex-col bg-white rounded-md p-4 shadow-sm mb-6">
-        <h1 className="text-2xl font-bold">All Stations</h1>
+        <h1 className="text-2xl font-bold">Favorite Stations</h1>
         <p className="text-gray-600">
-          List of all stations will be displayed here.
+          List of all your favorite stations will be displayed here.
         </p>
       </section>
       <section className="grid grid-cols-5 grid-rows-auto rounded-md gap-6">
@@ -84,11 +89,11 @@ export default function AllStations() {
               >
                 <h2 className="text-xl font-semibold">{station.name}</h2>
               </Link>
-              <button
-                className="cursor-pointer"
-                onClick={() => addFavorite(station.station_id)}
-              >
-                <Star className="text-yellow-500 w-6 h-6 hover:fill-yellow-500" />
+              <button className="cursor-pointer">
+                <StarOff
+                  className="text-yellow-500 w-6 h-6 hover:fill-yellow-500"
+                  onClick={() => removeFavorite(station.station_id)}
+                />
               </button>
             </div>
 
