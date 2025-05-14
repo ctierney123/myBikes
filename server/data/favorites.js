@@ -1,4 +1,5 @@
 import { client } from "../app.js";
+import { getAllStationsAndStatuses } from "./stations.js";
 
 const getFavoritesByUserId = async (userId) => {
   let favoritesCache = await client.lRange(`user/${userId}/favorites`, 0, -1);
@@ -7,6 +8,13 @@ const getFavoritesByUserId = async (userId) => {
 
   if (favoritesCache) {
     favoritesCache = favoritesCache.map((item) => JSON.parse(item));
+
+    const data = await getAllStationsAndStatuses();
+
+    favoritesCache = favoritesCache.map((item) => {
+      const station = data.find((station) => station.station_id === item);
+      return station;
+    });
 
     return favoritesCache;
   } else {
@@ -35,7 +43,14 @@ const addFavorite = async (userId, stationId) => {
 
   parsedCache.push(stationId);
 
-  return parsedCache;
+  const data = await getAllStationsAndStatuses();
+
+  res = parsedCache.map((item) => {
+    const station = data.find((station) => station.station_id === item);
+    return station;
+  });
+
+  return res;
 };
 
 const removeFavorite = async (userId, stationId) => {
@@ -58,6 +73,12 @@ const removeFavorite = async (userId, stationId) => {
   }
 
   const res = parsedCache.filter((item) => item !== stationId);
+
+  res = parsedCache.map((item) => {
+    const station = data.find((station) => station.station_id === item);
+    return station;
+  });
+
   return res;
 };
 

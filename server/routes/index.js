@@ -7,7 +7,7 @@ import testRoutes from "./test_routes.js";
 const constructorMethod = (app) => {
   app.use("/users", userRoutes);
   app.use("/stations", stationRoutes);
-  // app.use("/favorites", favoriteRoutes);
+  app.use("/favorites", favoriteRoutes);
   app.use("/test", testRoutes);
   app.use("/{*any}", (req, res) => {
     res.status(404).json({ error: "No Valid Route" });

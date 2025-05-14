@@ -10,8 +10,7 @@ import NearbyStations from "./pages/NearbyStations.jsx";
 import Settings from "./pages/Settings.jsx";
 import SearchStations from "./pages/SearchStations.jsx";
 import Station from "./pages/Station.jsx";
-import SearchPage from "./pages/SearchPage.jsx";
-import FavoriteStationsPage from "./pages/FavoriteStationsPage.jsx";
+import FavoriteStations from "./pages/FavoriteStations.jsx";
 
 function App() {
   return (
@@ -23,14 +22,11 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<AllStations />} />
-          <Route path="favorites" element={<h1>Favorites</h1>} />
+          <Route path="favorites" element={<FavoriteStations />} />
           <Route path="nearby" element={<NearbyStations />} />
           <Route path="settings" element={<Settings />} />
           <Route path="search" element={<SearchStations />} />
           <Route path=":id" element={<Station />} />
-          <Route path="profile" element={<h1>Profile</h1>} />
-          <Route path="searchTest" element={<SearchPage />} />
-          <Route path="favoritez" element={<FavoriteStationsPage />} />
         </Route>
       </Routes>
     </AuthProvider>
